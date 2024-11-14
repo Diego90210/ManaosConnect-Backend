@@ -26,6 +26,9 @@ public class EmpresaService {
 
     // anadir una nueva empresa
     public Empresa anadirEmpresa(Empresa empresa) {
+        if (empresaRepository.findById(empresa.getNit()).isPresent()){
+            throw new RuntimeException("Ya existe un empleado con el NIT: " + empresa.getNit());
+        }
         return empresaRepository.save(empresa);
     }
 
