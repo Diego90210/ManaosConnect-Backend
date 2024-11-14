@@ -14,7 +14,18 @@ public class Empleado {
     @Column(nullable = false)
     private Long empresaNIT;
 
+    @Column(nullable = false)
+    private Long telefono;
+
     // Getters y Setters
+
+    public Long getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(Long telefono) {
+        this.telefono = telefono;
+    }
 
     public Long getCedula() {
         return cedula;
@@ -46,6 +57,7 @@ public class Empleado {
                 "cedula=" + cedula +
                 ", nombre='" + nombre + '\'' +
                 ", empresaNIT=" + empresaNIT +
+                ", telefono=" + telefono +
                 '}';
     }
 }

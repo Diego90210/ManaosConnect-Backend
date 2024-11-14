@@ -34,6 +34,10 @@ public class EmpleadoService {
         empresaRepository.findById(empleado.getEmpresaNIT())
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + empleado.getEmpresaNIT()));
 
+        if (empleadoRepository.findById(empleado.getCedula()).isPresent()) {
+            throw new RuntimeException("Ya existe un empleado con la cédula: " + empleado.getCedula());
+        }
+
         return empleadoRepository.save(empleado);
     }
 
@@ -42,12 +46,14 @@ public class EmpleadoService {
         Empleado empleadoExistente = empleadoRepository.findById(cedula)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
 
-        empleadoExistente.setNombre(detallesEmpleado.getNombre());
-        empleadoExistente.setEmpresaNIT(detallesEmpleado.getEmpresaNIT()); // Actualizar NIT de la empresa
 
         // Validar si la empresa existe
         empresaRepository.findById(detallesEmpleado.getEmpresaNIT())
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + detallesEmpleado.getEmpresaNIT()));
+
+        empleadoExistente.setNombre(detallesEmpleado.getNombre());
+        empleadoExistente.setEmpresaNIT(detallesEmpleado.getEmpresaNIT());
+        empleadoExistente.setTelefono(detallesEmpleado.getTelefono());
 
         return empleadoRepository.save(empleadoExistente);
     }
