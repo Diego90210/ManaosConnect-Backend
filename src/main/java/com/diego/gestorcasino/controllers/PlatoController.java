@@ -23,14 +23,14 @@ public class PlatoController {
     }
 
     // Obtener un plato por su ID
-    @GetMapping("/{id}")
+    @GetMapping("id/{id}")
     public ResponseEntity<Plato> obtenerPlatoPorId(@PathVariable Long id) {
         Plato plato = platoService.obtenerPlatoPorId(id);
         return ResponseEntity.ok(plato);
     }
 
     // Obtener un plato por su nombre
-    @GetMapping("/{nombre}")
+    @GetMapping("nombre/{nombre}")
     public ResponseEntity<Plato> obtenerPlatoPorNombre(@PathVariable String nombre){
         Plato plato = platoService.obtenerPlatoPorNombre(nombre);
         return ResponseEntity.ok(plato);
@@ -44,27 +44,27 @@ public class PlatoController {
     }
 
     // Actualizar un plato existente
-    @PutMapping("/{id}")
+    @PutMapping("id/{id}")
     public ResponseEntity<Plato> actualizarPlato(@PathVariable Long id, @RequestBody Plato detallesPlato) {
         Plato platoActualizado = platoService.actualizarPlato(id, detallesPlato);
         return ResponseEntity.ok(platoActualizado);
     }
 
     // Actualizar un plato existente mediante su nombre
-    @PutMapping("/{nombre}")
+    @PutMapping("nombre/{nombre}")
     public ResponseEntity<Plato> actualizarPlatoPorNombre (@PathVariable String nombre, @RequestBody Plato detallesPlato){
         Plato platoActualizado = platoService.actualizarPlatoPorNombre(nombre, detallesPlato);
         return ResponseEntity.ok(platoActualizado);
     }
     // Eliminar un plato
-    @DeleteMapping("/{id}")
+    @DeleteMapping("id/{id}")
     public ResponseEntity<Void> eliminarPlato(@PathVariable Long id) {
         platoService.eliminarPlato(id);
         return ResponseEntity.noContent().build();
     }
 
     // Eliminar un plato mediante su nombre
-    @DeleteMapping("/{nombre}")
+    @DeleteMapping("nombre/{nombre}")
     public ResponseEntity<Void> eliminarPlatoPorNombre(@PathVariable String nombre){
         platoService.eliminarPlatoPorNombre(nombre);
         return ResponseEntity.noContent().build();
