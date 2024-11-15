@@ -24,6 +24,12 @@ public class PlatoService {
                 .orElseThrow(() -> new RuntimeException("Plato no encontrado con id: " + id));
     }
 
+    //Obtener un plato por su nombre
+    public Plato obtenerPlatoPorNombre(String nombre){
+        return platoRepository.findByNombreIgnoreCase(nombre)
+                .orElseThrow(() -> new RuntimeException("Plato no encontrado con nombre: " + nombre));
+    }
+
     // Añadir un nuevo plato
     public Plato anadirPlato(Plato plato) {
         return platoRepository.save(plato);
@@ -42,10 +48,30 @@ public class PlatoService {
         return platoRepository.save(platoExistente);
     }
 
+    //Actualizar un plato existente mediante su nombre
+    public Plato actualizarPlatoPorNombre (String nombre, Plato detallesPlato){
+        Plato platoExistente = platoRepository.findByNombreIgnoreCase(nombre)
+                .orElseThrow(() -> new RuntimeException("Plato no encontrado con nombre: " + nombre));
+
+        platoExistente.setNombre(detallesPlato.getNombre());
+        platoExistente.setPrecio(detallesPlato.getPrecio());
+        platoExistente.setDescripcion(detallesPlato.getDescripcion());
+        platoExistente.setCategoria(detallesPlato.getCategoria());
+
+        return platoRepository.save(platoExistente);
+    }
+
     // Eliminar un plato
     public void eliminarPlato(Long id) {
         Plato plato = platoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plato no encontrado con id: " + id));
+        platoRepository.delete(plato);
+    }
+
+    //Eliminar un plato mediante su nombre
+    public void eliminarPlatoPorNombre(String nombre){
+        Plato plato = platoRepository.findByNombreIgnoreCase(nombre)
+                .orElseThrow(() -> new RuntimeException("Plato no encontrado con nombre: " + nombre));
         platoRepository.delete(plato);
     }
 }
