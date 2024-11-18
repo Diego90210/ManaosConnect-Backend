@@ -42,8 +42,8 @@ public class ReporteService {
     }
 
     // Crear un nuevo reporte basado en un intervalo de fechas y una empresa
-    public Reporte crearReporte(Long nitEmpresa, LocalDate fechaInicio, LocalDate fechaFin) {
-        Empresa empresa = empresaRepository.findById(nitEmpresa)
+    public Reporte crearReporte(String nitEmpresa, LocalDate fechaInicio, LocalDate fechaFin) {
+        Empresa empresa = empresaRepository.findByNit(nitEmpresa)
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + nitEmpresa));
 
         List<Consumo> consumos = consumoRepository.findAll().stream()

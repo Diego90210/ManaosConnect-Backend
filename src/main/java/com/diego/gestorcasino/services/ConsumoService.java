@@ -28,20 +28,20 @@ public class ConsumoService {
     }
 
     // Obtener los consumos por empleado
-    public List<Consumo> obtenerConsumosPorEmpleado(Long cedulaEmpleado) {
+    public List<Consumo> obtenerConsumosPorEmpleado(String cedulaEmpleado) {
         return consumoRepository.findByCedulaEmpleado(cedulaEmpleado);
     }
 
     // Obtener un consumo por su ID
-    public Consumo obtenerConsumoPorId(Long id) {
+    public Consumo obtenerConsumoPorId(int id) {
         return consumoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Consumo no encontrado con id: " + id));
     }
 
     // Añadir un nuevo consumo
-    public Consumo anadirConsumo(Long cedulaEmpleado, Consumo consumo) {
+    public Consumo anadirConsumo(String cedulaEmpleado, Consumo consumo) {
         // Verificar si el empleado existe
-        if (!empleadoRepository.existsById(cedulaEmpleado)) {
+        if (empleadoRepository.findByCedula(cedulaEmpleado).isEmpty()) {
             throw new RuntimeException("Empleado no encontrado con cédula: " + cedulaEmpleado);
         }
         consumo.setCedulaEmpleado(cedulaEmpleado);
@@ -57,7 +57,7 @@ public class ConsumoService {
     }
 
     // Actualizar un consumo
-    public Consumo actualizarConsumo(Long id, Consumo detallesConsumo) {
+    public Consumo actualizarConsumo(int id, Consumo detallesConsumo) {
         Consumo consumoExistente = consumoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Consumo no encontrado con id: " + id));
 
@@ -74,7 +74,7 @@ public class ConsumoService {
     }
 
     // Eliminar un consumo
-    public void eliminarConsumo(Long id) {
+    public void eliminarConsumo(int id) {
         Consumo consumo = consumoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Consumo no encontrado con id: " + id));
         consumoRepository.delete(consumo);

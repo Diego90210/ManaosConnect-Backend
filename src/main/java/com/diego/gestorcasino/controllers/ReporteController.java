@@ -38,7 +38,7 @@ public class ReporteController {
 
     // Crear un nuevo reporte
     @PostMapping
-    public ResponseEntity<Reporte> crearReporte(@RequestParam Long nitEmpresa,
+    public ResponseEntity<Reporte> crearReporte(@RequestParam String nitEmpresa,
                                                 @RequestParam LocalDate fechaInicio,
                                                 @RequestParam LocalDate fechaFin) {
         Reporte nuevoReporte = reporteService.crearReporte(nitEmpresa, fechaInicio, fechaFin);

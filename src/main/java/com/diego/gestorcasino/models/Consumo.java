@@ -11,10 +11,10 @@ public class Consumo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(nullable = false)
-    private Long cedulaEmpleado;  // Solo se almacena la cédula del empleado
+    private String cedulaEmpleado;  // Solo se almacena la cédula del empleado
 
     @Column(nullable = false)
     private LocalDate fecha;
@@ -30,29 +30,20 @@ public class Consumo {
     )
     private List<Plato> platosConsumidos = new ArrayList<>();
 
-    // Getters y setters
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public Long getCedulaEmpleado() {
-        return cedulaEmpleado;
+    public List<Plato> getPlatosConsumidos() {
+        return platosConsumidos;
     }
 
-    public void setCedulaEmpleado(Long cedulaEmpleado) {
-        this.cedulaEmpleado = cedulaEmpleado;
-    }
-
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
+    public void setPlatosConsumidos(List<Plato> platosConsumidos) {
+        this.platosConsumidos = platosConsumidos;
     }
 
     public double getTotal() {
@@ -63,11 +54,30 @@ public class Consumo {
         this.total = total;
     }
 
-    public List<Plato> getPlatosConsumidos() {
-        return platosConsumidos;
+    public LocalDate getFecha() {
+        return fecha;
     }
 
-    public void setPlatosConsumidos(List<Plato> platosConsumidos) {
-        this.platosConsumidos = platosConsumidos;
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getCedulaEmpleado() {
+        return cedulaEmpleado;
+    }
+
+    public void setCedulaEmpleado(String cedulaEmpleado) {
+        this.cedulaEmpleado = cedulaEmpleado;
+    }
+
+    @Override
+    public String toString() {
+        return "Consumo{" +
+                "id=" + id +
+                ", cedulaEmpleado='" + cedulaEmpleado + '\'' +
+                ", fecha=" + fecha +
+                ", total=" + total +
+                ", platosConsumidos=" + platosConsumidos +
+                '}';
     }
 }

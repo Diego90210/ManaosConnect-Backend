@@ -25,42 +25,42 @@ public class ConsumoController {
 
     // Obtener consumos por empleado
     @GetMapping("/empleado/{cedula}")
-    public ResponseEntity<List<Consumo>> obtenerConsumosPorEmpleado(@PathVariable Long cedula) {
+    public ResponseEntity<List<Consumo>> obtenerConsumosPorEmpleado(@PathVariable String cedula) {
         List<Consumo> consumos = consumoService.obtenerConsumosPorEmpleado(cedula);
         return ResponseEntity.ok(consumos);
     }
 
     // Obtener un consumo por su ID
     @GetMapping("/{id}")
-    public ResponseEntity<Consumo> obtenerConsumoPorId(@PathVariable Long id) {
+    public ResponseEntity<Consumo> obtenerConsumoPorId(@PathVariable int id) {
         Consumo consumo = consumoService.obtenerConsumoPorId(id);
         return ResponseEntity.ok(consumo);
     }
 
     // Crear un nuevo consumo
     @PostMapping
-    public ResponseEntity<Consumo> anadirConsumo(@RequestParam Long empleadoCedula, @RequestBody Consumo consumo) {
+    public ResponseEntity<Consumo> anadirConsumo(@RequestParam String empleadoCedula, @RequestBody Consumo consumo) {
         Consumo nuevoConsumo = consumoService.anadirConsumo(empleadoCedula, consumo);
         return ResponseEntity.ok(nuevoConsumo);
     }
 
     // Actualizar un consumo
     @PutMapping("/{id}")
-    public ResponseEntity<Consumo> actualizarConsumo(@PathVariable Long id, @RequestBody Consumo detallesConsumo) {
+    public ResponseEntity<Consumo> actualizarConsumo(@PathVariable int id, @RequestBody Consumo detallesConsumo) {
         Consumo consumoActualizado = consumoService.actualizarConsumo(id, detallesConsumo);
         return ResponseEntity.ok(consumoActualizado);
     }
 
     // Eliminar un consumo
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarConsumo(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarConsumo(@PathVariable int id) {
         consumoService.eliminarConsumo(id);
         return ResponseEntity.noContent().build();
     }
 
     // Obtener el total de un consumo
     @GetMapping("/{id}/total")
-    public ResponseEntity<Double> obtenerTotalConsumo(@PathVariable Long id) {
+    public ResponseEntity<Double> obtenerTotalConsumo(@PathVariable int id) {
         Consumo consumo = consumoService.obtenerConsumoPorId(id);
         return ResponseEntity.ok(consumo.getTotal()); // Devolver el total almacenado
     }

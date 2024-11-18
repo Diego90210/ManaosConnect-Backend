@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ConsumoRepository extends JpaRepository<Consumo, Long> {
-    List<Consumo> findByCedulaEmpleado(Long cedula);
+public interface ConsumoRepository extends JpaRepository<Consumo, Integer> {
+    List<Consumo> findByCedulaEmpleado(String cedula);
 }
 
