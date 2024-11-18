@@ -24,7 +24,7 @@ public class PlatoController {
 
     // Obtener un plato por su ID
     @GetMapping("id/{id}")
-    public ResponseEntity<Plato> obtenerPlatoPorId(@PathVariable Long id) {
+    public ResponseEntity<Plato> obtenerPlatoPorId(@PathVariable int id) {
         Plato plato = platoService.obtenerPlatoPorId(id);
         return ResponseEntity.ok(plato);
     }
@@ -45,7 +45,7 @@ public class PlatoController {
 
     // Actualizar un plato existente
     @PutMapping("id/{id}")
-    public ResponseEntity<Plato> actualizarPlato(@PathVariable Long id, @RequestBody Plato detallesPlato) {
+    public ResponseEntity<Plato> actualizarPlato(@PathVariable int id, @RequestBody Plato detallesPlato) {
         Plato platoActualizado = platoService.actualizarPlato(id, detallesPlato);
         return ResponseEntity.ok(platoActualizado);
     }
@@ -58,7 +58,7 @@ public class PlatoController {
     }
     // Eliminar un plato
     @DeleteMapping("id/{id}")
-    public ResponseEntity<Void> eliminarPlato(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarPlato(@PathVariable int id) {
         platoService.eliminarPlato(id);
         return ResponseEntity.noContent().build();
     }

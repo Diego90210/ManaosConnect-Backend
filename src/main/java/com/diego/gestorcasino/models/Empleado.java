@@ -6,58 +6,56 @@ import jakarta.persistence.*;
 @Table(name = "empleados")
 public class Empleado {
     @Id
-    private Long cedula;
+    private String cedula;
 
     @Column(nullable = false)
     private String nombre;
 
     @Column(nullable = false)
-    private Long empresaNIT;
+    private String empresaNIT;
 
     @Column(nullable = false)
-    private Long telefono;
+    private String telefono;
 
-    // Getters y Setters
-
-    public Long getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(Long telefono) {
-        this.telefono = telefono;
-    }
-
-    public Long getCedula() {
+    public String getCedula() {
         return cedula;
     }
 
-    public String getNombre() {
-        return nombre;
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
-    public Long getEmpresaNIT() {
-        return empresaNIT;
-    }
-
-    public void setCedula(Long cedula) {
-        this.cedula = cedula;
+    public void setEmpresaNIT(String empresaNIT) {
+        this.empresaNIT = empresaNIT;
     }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
-    public void setEmpresaNIT(Long empresaNIT) {
-        this.empresaNIT = empresaNIT;
+    public void setCedula(String cedula) {
+        this.cedula = cedula;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public String getEmpresaNIT() {
+        return empresaNIT;
+    }
+
+    public String getNombre() {
+        return nombre;
     }
 
     @Override
     public String toString() {
         return "Empleado{" +
-                "cedula=" + cedula +
+                "cedula='" + cedula + '\'' +
                 ", nombre='" + nombre + '\'' +
-                ", empresaNIT=" + empresaNIT +
-                ", telefono=" + telefono +
+                ", empresaNIT='" + empresaNIT + '\'' +
+                ", telefono='" + telefono + '\'' +
                 '}';
     }
 }

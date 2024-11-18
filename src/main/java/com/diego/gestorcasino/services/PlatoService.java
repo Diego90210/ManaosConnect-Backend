@@ -19,7 +19,7 @@ public class PlatoService {
     }
 
     // Obtener un plato por su ID
-    public Plato obtenerPlatoPorId(Long id) {
+    public Plato obtenerPlatoPorId(int id) {
         return platoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plato no encontrado con id: " + id));
     }
@@ -32,11 +32,14 @@ public class PlatoService {
 
     // Añadir un nuevo plato
     public Plato anadirPlato(Plato plato) {
+        if (platoRepository.findByNombreIgnoreCase(plato.getNombre()).isPresent()){
+            throw new RuntimeException("Ya existe un plato con el nombre: " + plato.getNombre());
+        }
         return platoRepository.save(plato);
     }
 
     // Actualizar un plato existente
-    public Plato actualizarPlato(Long id, Plato detallesPlato) {
+    public Plato actualizarPlato(int id, Plato detallesPlato) {
         Plato platoExistente = platoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plato no encontrado con id: " + id));
 
@@ -62,7 +65,7 @@ public class PlatoService {
     }
 
     // Eliminar un plato
-    public void eliminarPlato(Long id) {
+    public void eliminarPlato(int id) {
         Plato plato = platoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plato no encontrado con id: " + id));
         platoRepository.delete(plato);

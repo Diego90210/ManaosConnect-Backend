@@ -19,22 +19,22 @@ public class EmpresaService {
     }
 
     // Obtener una empresa por NIT
-    public Empresa obtenerEmpresaPorNit(Long nit) {
-        return empresaRepository.findById(nit)
+    public Empresa obtenerEmpresaPorNit(String nit) {
+        return empresaRepository.findByNit(nit)
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + nit));
     }
 
     // anadir una nueva empresa
     public Empresa anadirEmpresa(Empresa empresa) {
-        if (empresaRepository.findById(empresa.getNit()).isPresent()){
-            throw new RuntimeException("Ya existe un empleado con el NIT: " + empresa.getNit());
+        if (empresaRepository.findByNit(empresa.getNit()).isPresent()){
+            throw new RuntimeException("Ya existe una empresa con el NIT: " + empresa.getNit());
         }
         return empresaRepository.save(empresa);
     }
 
     // Actualizar una empresa existente
-    public Empresa actualizarEmpresa(Long nit, Empresa detallesEmpresa) {
-        Empresa empresaExistente = empresaRepository.findById(nit)
+    public Empresa actualizarEmpresa(String nit, Empresa detallesEmpresa) {
+        Empresa empresaExistente = empresaRepository.findByNit(nit)
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + nit));
 
         empresaExistente.setNombre(detallesEmpresa.getNombre());
@@ -47,8 +47,8 @@ public class EmpresaService {
     }
 
     // Eliminar una empresa
-    public void eliminarEmpresa(Long nit) {
-        Empresa empresa = empresaRepository.findById(nit)
+    public void eliminarEmpresa(String nit) {
+        Empresa empresa = empresaRepository.findByNit(nit)
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + nit));
         empresaRepository.delete(empresa);
     }

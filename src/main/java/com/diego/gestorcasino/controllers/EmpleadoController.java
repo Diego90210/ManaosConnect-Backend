@@ -24,7 +24,7 @@ public class EmpleadoController {
 
     // Obtener un empleado por cédula
     @GetMapping("/{cedula}")
-    public ResponseEntity<Empleado> obtenerEmpleadoPorCedula(@PathVariable Long cedula) {
+    public ResponseEntity<Empleado> obtenerEmpleadoPorCedula(@PathVariable String cedula) {
         Empleado empleado = empleadoService.obtenerEmpleadoPorCedula(cedula);
         return ResponseEntity.ok(empleado);
     }
@@ -38,14 +38,14 @@ public class EmpleadoController {
 
     // Actualizar un empleado existente
     @PutMapping("/{cedula}")
-    public ResponseEntity<Empleado> actualizarEmpleado(@PathVariable Long cedula, @RequestBody Empleado detallesEmpleado) {
+    public ResponseEntity<Empleado> actualizarEmpleado(@PathVariable String cedula, @RequestBody Empleado detallesEmpleado) {
         Empleado empleadoActualizado = empleadoService.actualizarEmpleado(cedula, detallesEmpleado);
         return ResponseEntity.ok(empleadoActualizado);
     }
 
     // Eliminar un empleado
     @DeleteMapping("/{cedula}")
-    public ResponseEntity<Void> eliminarEmpleado(@PathVariable Long cedula) {
+    public ResponseEntity<Void> eliminarEmpleado(@PathVariable String cedula) {
         empleadoService.eliminarEmpleado(cedula);
         return ResponseEntity.noContent().build();
     }

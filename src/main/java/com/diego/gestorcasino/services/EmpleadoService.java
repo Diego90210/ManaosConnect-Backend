@@ -23,18 +23,18 @@ public class EmpleadoService {
     }
 
     // Obtener un empleado por cédula
-    public Empleado obtenerEmpleadoPorCedula(Long cedula) {
-        return empleadoRepository.findById(cedula)
+    public Empleado obtenerEmpleadoPorCedula(String cedula) {
+        return empleadoRepository.findByCedula(cedula)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
     }
 
     // anadir un nuevo empleado
     public Empleado anadirEmpleado(Empleado empleado) {
         // Validar si la empresa existe por NIT
-        empresaRepository.findById(empleado.getEmpresaNIT())
+        empresaRepository.findByNit(empleado.getEmpresaNIT())
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + empleado.getEmpresaNIT()));
 
-        if (empleadoRepository.findById(empleado.getCedula()).isPresent()) {
+        if (empleadoRepository.findByCedula(empleado.getCedula()).isPresent()) {
             throw new RuntimeException("Ya existe un empleado con la cédula: " + empleado.getCedula());
         }
 
@@ -42,13 +42,13 @@ public class EmpleadoService {
     }
 
     // Actualizar un empleado
-    public Empleado actualizarEmpleado(Long cedula, Empleado detallesEmpleado) {
-        Empleado empleadoExistente = empleadoRepository.findById(cedula)
+    public Empleado actualizarEmpleado(String cedula, Empleado detallesEmpleado) {
+        Empleado empleadoExistente = empleadoRepository.findByCedula(cedula)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
 
 
         // Validar si la empresa existe
-        empresaRepository.findById(detallesEmpleado.getEmpresaNIT())
+        empresaRepository.findByNit(detallesEmpleado.getEmpresaNIT())
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + detallesEmpleado.getEmpresaNIT()));
 
         empleadoExistente.setNombre(detallesEmpleado.getNombre());
@@ -59,8 +59,8 @@ public class EmpleadoService {
     }
 
     // Borrar un empleado
-    public void eliminarEmpleado(Long cedula) {
-        Empleado empleado = empleadoRepository.findById(cedula)
+    public void eliminarEmpleado(String cedula) {
+        Empleado empleado = empleadoRepository.findByCedula(cedula)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
         empleadoRepository.delete(empleado);
     }

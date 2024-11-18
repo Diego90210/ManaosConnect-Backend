@@ -25,7 +25,7 @@ public class EmpresaController {
 
     // Obtener una empresa por NIT
     @GetMapping("/{nit}")
-    public ResponseEntity<Empresa> obtenerEmpresaPorNit(@PathVariable Long nit) {
+    public ResponseEntity<Empresa> obtenerEmpresaPorNit(@PathVariable String nit) {
         Empresa empresa = empresaService.obtenerEmpresaPorNit(nit);
         return ResponseEntity.ok(empresa);
     }
@@ -39,14 +39,14 @@ public class EmpresaController {
 
     // Actualizar una empresa existente
     @PutMapping("/{nit}")
-    public ResponseEntity<Empresa> actualizarEmpresa(@PathVariable Long nit, @RequestBody Empresa detallesEmpresa) {
+    public ResponseEntity<Empresa> actualizarEmpresa(@PathVariable String nit, @RequestBody Empresa detallesEmpresa) {
         Empresa empresaActualizada = empresaService.actualizarEmpresa(nit, detallesEmpresa);
         return ResponseEntity.ok(empresaActualizada);
     }
 
     // Eliminar una empresa
     @DeleteMapping("/{nit}")
-    public ResponseEntity<Void> eliminarEmpresa(@PathVariable Long nit) {
+    public ResponseEntity<Void> eliminarEmpresa(@PathVariable String nit) {
         empresaService.eliminarEmpresa(nit);
         return ResponseEntity.noContent().build();
     }

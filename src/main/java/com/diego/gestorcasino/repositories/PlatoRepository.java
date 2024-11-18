@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface PlatoRepository extends JpaRepository<Plato, Long> {
+public interface PlatoRepository extends JpaRepository<Plato, Integer> {
     @Query("SELECT p FROM Plato p WHERE LOWER(p.nombre) = LOWER(:nombre)")
     Optional<Plato> findByNombreIgnoreCase(@Param("nombre") String nombre);
 }
