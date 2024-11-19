@@ -25,13 +25,13 @@ public class ReporteController {
 
     // Obtener reportes por empresa (por NIT)
     @GetMapping("/empresa/{nit}")
-    public List<Reporte> obtenerReportesPorEmpresa(@PathVariable Long nit) {
+    public List<Reporte> obtenerReportesPorEmpresa(@PathVariable String nit) {
         return reporteService.obtenerReportesPorEmpresa(nit);
     }
 
     // Obtener un reporte por su ID
     @GetMapping("/{id}")
-    public ResponseEntity<Reporte> obtenerReportePorId(@PathVariable Long id) {
+    public ResponseEntity<Reporte> obtenerReportePorId(@PathVariable int id) {
         Reporte reporte = reporteService.obtenerReportePorId(id);
         return ResponseEntity.ok(reporte);
     }
@@ -47,7 +47,7 @@ public class ReporteController {
 
     // Eliminar un reporte
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarReporte(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarReporte(@PathVariable int id) {
         reporteService.eliminarReporte(id);
         return ResponseEntity.noContent().build();
     }

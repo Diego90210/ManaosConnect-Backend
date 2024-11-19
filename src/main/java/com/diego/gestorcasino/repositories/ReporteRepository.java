@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ReporteRepository extends JpaRepository<Reporte, Long> {
-    List<Reporte> findByEmpresaNit(Long nit);
+public interface ReporteRepository extends JpaRepository<Reporte, Integer> {
+    List<Reporte> findByEmpresaNit(String nit);
 }
 

@@ -31,12 +31,12 @@ public class ReporteService {
     }
 
     // Obtener reportes por empresa (por NIT)
-    public List<Reporte> obtenerReportesPorEmpresa(Long nit) {
+    public List<Reporte> obtenerReportesPorEmpresa(String nit) {
         return reporteRepository.findByEmpresaNit(nit);
     }
 
     // Obtener un reporte por su ID
-    public Reporte obtenerReportePorId(Long id) {
+    public Reporte obtenerReportePorId(int id) {
         return reporteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Reporte no encontrado con id: " + id));
     }
@@ -63,7 +63,7 @@ public class ReporteService {
     }
 
     // Eliminar un reporte
-    public void eliminarReporte(Long id) {
+    public void eliminarReporte(int id) {
         Reporte reporte = reporteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Reporte no encontrado con id: " + id));
         reporteRepository.delete(reporte);
