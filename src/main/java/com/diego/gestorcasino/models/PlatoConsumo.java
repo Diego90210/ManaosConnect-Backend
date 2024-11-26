@@ -1,5 +1,6 @@
 package com.diego.gestorcasino.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -19,6 +20,7 @@ public class PlatoConsumo {
 
     @ManyToOne
     @JoinColumn(name = "consumo_id", nullable = false)
+    @JsonIgnore
     private Consumo consumo;
 
     // Getters y Setters

@@ -1,13 +1,13 @@
 package com.diego.gestorcasino.controllers;
 
 import com.diego.gestorcasino.models.Reporte;
+import com.diego.gestorcasino.dto.ReporteRequestDTO;
 import com.diego.gestorcasino.services.ReporteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -38,10 +38,12 @@ public class ReporteController {
 
     // Crear un nuevo reporte
     @PostMapping
-    public ResponseEntity<Reporte> crearReporte(@RequestParam String nitEmpresa,
-                                                @RequestParam LocalDate fechaInicio,
-                                                @RequestParam LocalDate fechaFin) {
-        Reporte nuevoReporte = reporteService.crearReporte(nitEmpresa, fechaInicio, fechaFin);
+    public ResponseEntity<Reporte> crearReporte(@RequestBody ReporteRequestDTO requestDTO) {
+        Reporte nuevoReporte = reporteService.crearReporte(
+                requestDTO.getNitEmpresa(),
+                requestDTO.getFechaInicio(),
+                requestDTO.getFechaFin()
+        );
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoReporte);
     }
 

@@ -38,8 +38,8 @@ public class ConsumoController {
 
     // Crear un nuevo consumo
     @PostMapping
-    public ResponseEntity<Consumo> anadirConsumo(@RequestParam String cedulaEmpleado, @RequestBody Consumo consumo) {
-        Consumo nuevoConsumo = consumoService.anadirConsumo(cedulaEmpleado, consumo);
+    public ResponseEntity<Consumo> anadirConsumo(@RequestBody Consumo consumo) {
+        Consumo nuevoConsumo = consumoService.anadirConsumo(consumo.getCedulaEmpleado(),consumo);
         return ResponseEntity.ok(nuevoConsumo);
     }
 

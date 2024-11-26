@@ -1,4 +1,4 @@
-package com.diego.gestorcasino.models;
+package com.diego.gestorcasino.dto;
 
 import java.util.List;
 

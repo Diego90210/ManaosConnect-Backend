@@ -43,16 +43,22 @@ public class ReporteService {
 
     // Crear un nuevo reporte basado en un intervalo de fechas y una empresa
     public Reporte crearReporte(String nitEmpresa, LocalDate fechaInicio, LocalDate fechaFin) {
+        // Verificar si la empresa existe
         Empresa empresa = empresaRepository.findByNit(nitEmpresa)
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + nitEmpresa));
 
+        // Obtener los consumos dentro del rango de fechas
         List<Consumo> consumos = consumoRepository.findAll().stream()
-                .filter(consumo -> consumo.getCedulaEmpleado() != null)  // Aquí puedes agregar una validación si es necesario
+                .filter(consumo -> consumo.getCedulaEmpleado() != null)
                 .filter(consumo -> !consumo.getFecha().isBefore(fechaInicio) && !consumo.getFecha().isAfter(fechaFin))
                 .collect(Collectors.toList());
 
-        double totalConsumos = consumos.stream().mapToDouble(Consumo::getTotal).sum();
+        // Calcular el total de los consumos
+        double totalConsumos = consumos.stream()
+                .mapToDouble(Consumo::getTotal)
+                .sum();
 
+        // Crear y guardar el reporte
         Reporte nuevoReporte = new Reporte();
         nuevoReporte.setEmpresa(empresa);
         nuevoReporte.setFechaInicio(fechaInicio);
