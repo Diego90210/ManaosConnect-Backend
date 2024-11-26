@@ -1,6 +1,7 @@
 package com.diego.gestorcasino.services;
 
 import com.diego.gestorcasino.models.Plato;
+import com.diego.gestorcasino.models.PlatoConsumo;
 import com.diego.gestorcasino.models.Consumo;
 import com.diego.gestorcasino.repositories.ConsumoRepository;
 import com.diego.gestorcasino.repositories.EmpleadoRepository;
@@ -46,10 +47,26 @@ public class ConsumoService {
         }
         consumo.setCedulaEmpleado(cedulaEmpleado);
 
-        // Calcular el total en base a los platos consumidos
+        for (PlatoConsumo platoConsumo : consumo.getPlatosConsumidos()) {
+            // Validar que el plato existe
+            Plato plato = platoRepository.findById(platoConsumo.getPlato().getId())
+                    .orElseThrow(() -> new RuntimeException("Plato no encontrado con id: " + platoConsumo.getPlato().getId()));
+
+            if (plato.getPrecio() <= 0) {
+                throw new RuntimeException("Precio inválido para el plato: " + plato.getNombre());
+            }
+
+            // Asignar el plato al PlatoConsumo
+            platoConsumo.setPlato(plato);
+
+            // Asignar el consumo al PlatoConsumo
+            platoConsumo.setConsumo(consumo);
+        }
+
+        // Calcular el total basado en los platos consumidos
         double total = consumo.getPlatosConsumidos()
                 .stream()
-                .mapToDouble(Plato::getPrecio)
+                .mapToDouble(platoConsumo -> platoConsumo.getPlato().getPrecio() * platoConsumo.getCantidad())
                 .sum();
         consumo.setTotal(total);
 
@@ -58,15 +75,20 @@ public class ConsumoService {
 
     // Actualizar un consumo
     public Consumo actualizarConsumo(int id, Consumo detallesConsumo) {
+        // Buscar el consumo existente
         Consumo consumoExistente = consumoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Consumo no encontrado con id: " + id));
 
+        // Actualizar la fecha
         consumoExistente.setFecha(detallesConsumo.getFecha());
+
+        // Actualizar los platos consumidos
         consumoExistente.setPlatosConsumidos(detallesConsumo.getPlatosConsumidos());
 
+        // Recalcular el total basado en los platos consumidos
         double total = consumoExistente.getPlatosConsumidos()
                 .stream()
-                .mapToDouble(Plato::getPrecio)
+                .mapToDouble(platoConsumo -> platoConsumo.getPlato().getPrecio() * platoConsumo.getCantidad())
                 .sum();
         consumoExistente.setTotal(total);
 
@@ -75,6 +97,7 @@ public class ConsumoService {
 
     // Eliminar un consumo
     public void eliminarConsumo(int id) {
+        // Buscar el consumo
         Consumo consumo = consumoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Consumo no encontrado con id: " + id));
         consumoRepository.delete(consumo);

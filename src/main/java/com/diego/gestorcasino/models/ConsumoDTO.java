@@ -1,30 +1,14 @@
 package com.diego.gestorcasino.models;
 
-import jakarta.persistence.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "consumos")
-public class Consumo {
+public class ConsumoDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @Column(nullable = false)
     private String cedulaEmpleado;
-
-    @Column(nullable = false)
-    private LocalDate fecha;
-
-    @Column(nullable = false)
+    private String fecha;
     private double total;
-
-    @OneToMany(mappedBy = "consumo", cascade = CascadeType.ALL)
-    private List<PlatoConsumo> platosConsumidos;
-
+    private List<PlatoConsumoDTO> platosConsumidos;
 
     // Getters y Setters
     public int getId() {
@@ -43,11 +27,11 @@ public class Consumo {
         this.cedulaEmpleado = cedulaEmpleado;
     }
 
-    public LocalDate getFecha() {
+    public String getFecha() {
         return fecha;
     }
 
-    public void setFecha(LocalDate fecha) {
+    public void setFecha(String fecha) {
         this.fecha = fecha;
     }
 
@@ -59,11 +43,33 @@ public class Consumo {
         this.total = total;
     }
 
-    public List<PlatoConsumo> getPlatosConsumidos() {
+    public List<PlatoConsumoDTO> getPlatosConsumidos() {
         return platosConsumidos;
     }
 
-    public void setPlatosConsumidos(List<PlatoConsumo> platosConsumidos) {
+    public void setPlatosConsumidos(List<PlatoConsumoDTO> platosConsumidos) {
         this.platosConsumidos = platosConsumidos;
+    }
+}
+
+class PlatoConsumoDTO {
+    private String nombrePlato;
+    private int cantidad;
+
+    // Getters y Setters
+    public String getNombrePlato() {
+        return nombrePlato;
+    }
+
+    public void setNombrePlato(String nombrePlato) {
+        this.nombrePlato = nombrePlato;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
     }
 }

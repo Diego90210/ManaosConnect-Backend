@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/consumos")
 public class ConsumoController {
@@ -39,8 +38,8 @@ public class ConsumoController {
 
     // Crear un nuevo consumo
     @PostMapping
-    public ResponseEntity<Consumo> anadirConsumo(@RequestParam String empleadoCedula, @RequestBody Consumo consumo) {
-        Consumo nuevoConsumo = consumoService.anadirConsumo(empleadoCedula, consumo);
+    public ResponseEntity<Consumo> anadirConsumo(@RequestParam String cedulaEmpleado, @RequestBody Consumo consumo) {
+        Consumo nuevoConsumo = consumoService.anadirConsumo(cedulaEmpleado, consumo);
         return ResponseEntity.ok(nuevoConsumo);
     }
 
@@ -58,11 +57,10 @@ public class ConsumoController {
         return ResponseEntity.noContent().build();
     }
 
-    // Obtener el total de un consumo
+    // Obtener el total de un consumo (opcional, ya que el total se encuentra dentro del objeto)
     @GetMapping("/{id}/total")
     public ResponseEntity<Double> obtenerTotalConsumo(@PathVariable int id) {
         Consumo consumo = consumoService.obtenerConsumoPorId(id);
-        return ResponseEntity.ok(consumo.getTotal()); // Devolver el total almacenado
+        return ResponseEntity.ok(consumo.getTotal());
     }
 }
-
