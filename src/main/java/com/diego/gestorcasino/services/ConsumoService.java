@@ -48,25 +48,28 @@ public class ConsumoService {
         consumo.setCedulaEmpleado(cedulaEmpleado);
 
         for (PlatoConsumo platoConsumo : consumo.getPlatosConsumidos()) {
-            // Validar que el plato existe
-            Plato plato = platoRepository.findById(platoConsumo.getPlato().getId())
-                    .orElseThrow(() -> new RuntimeException("Plato no encontrado con id: " + platoConsumo.getPlato().getId()));
+            // Buscar el plato por nombre
+            Plato plato = platoRepository.findByNombreIgnoreCase(platoConsumo.getNombrePlato())
+                    .orElseThrow(() -> new RuntimeException("Plato no encontrado con nombre: " + platoConsumo.getNombrePlato()));
 
+            // Validar el precio del plato
             if (plato.getPrecio() <= 0) {
                 throw new RuntimeException("Precio inválido para el plato: " + plato.getNombre());
             }
 
-            // Asignar el plato al PlatoConsumo
-            platoConsumo.setPlato(plato);
+            // Asignar el nombre del plato al PlatoConsumo
+            platoConsumo.setNombrePlato(plato.getNombre());
 
-            // Asignar el consumo al PlatoConsumo
+            // Asociar el consumo al PlatoConsumo
             platoConsumo.setConsumo(consumo);
         }
 
         // Calcular el total basado en los platos consumidos
         double total = consumo.getPlatosConsumidos()
                 .stream()
-                .mapToDouble(platoConsumo -> platoConsumo.getPlato().getPrecio() * platoConsumo.getCantidad())
+                .mapToDouble(platoConsumo -> platoRepository.findByNombreIgnoreCase(platoConsumo.getNombrePlato())
+                        .orElseThrow(() -> new RuntimeException("Plato no encontrado con nombre: " + platoConsumo.getNombrePlato()))
+                        .getPrecio() * platoConsumo.getCantidad())
                 .sum();
         consumo.setTotal(total);
 
@@ -85,15 +88,24 @@ public class ConsumoService {
         // Actualizar los platos consumidos
         consumoExistente.setPlatosConsumidos(detallesConsumo.getPlatosConsumidos());
 
-        // Recalcular el total basado en los platos consumidos
+        // Recalcular el total basado en los nombres de los platos consumidos
         double total = consumoExistente.getPlatosConsumidos()
                 .stream()
-                .mapToDouble(platoConsumo -> platoConsumo.getPlato().getPrecio() * platoConsumo.getCantidad())
+                .mapToDouble(platoConsumo -> {
+                    // Buscar el plato por nombre
+                    Plato plato = platoRepository.findByNombreIgnoreCase(platoConsumo.getNombrePlato())
+                            .orElseThrow(() -> new RuntimeException("Plato no encontrado con nombre: " + platoConsumo.getNombrePlato()));
+
+                    // Calcular subtotal por plato
+                    return plato.getPrecio() * platoConsumo.getCantidad();
+                })
                 .sum();
+
         consumoExistente.setTotal(total);
 
         return consumoRepository.save(consumoExistente);
     }
+
 
     // Eliminar un consumo
     public void eliminarConsumo(int id) {

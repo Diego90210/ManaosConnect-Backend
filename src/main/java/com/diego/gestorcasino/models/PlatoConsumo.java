@@ -11,9 +11,8 @@ public class PlatoConsumo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "plato_id", nullable = false)
-    private Plato plato;
+    @Column(nullable = false)
+    private String nombrePlato; // Almacenará el nombre del plato
 
     @Column(nullable = false)
     private int cantidad;
@@ -23,7 +22,7 @@ public class PlatoConsumo {
     @JsonIgnore
     private Consumo consumo;
 
-    // Getters y Setters
+    // Getters y setters
     public int getId() {
         return id;
     }
@@ -32,12 +31,12 @@ public class PlatoConsumo {
         this.id = id;
     }
 
-    public Plato getPlato() {
-        return plato;
+    public String getNombrePlato() {
+        return nombrePlato;
     }
 
-    public void setPlato(Plato plato) {
-        this.plato = plato;
+    public void setNombrePlato(String nombrePlato) {
+        this.nombrePlato = nombrePlato;
     }
 
     public int getCantidad() {
@@ -56,4 +55,3 @@ public class PlatoConsumo {
         this.consumo = consumo;
     }
 }
-
