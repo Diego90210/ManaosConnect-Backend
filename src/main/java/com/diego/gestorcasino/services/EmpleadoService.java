@@ -108,8 +108,14 @@ public class EmpleadoService {
         if (empleado.getRutaImagen() != null) {
             Path rutaImagen = Paths.get(empleado.getRutaImagen());
             try {
-                Files.deleteIfExists(rutaImagen);
-                empleado.setRutaImagen(null); // Limpiar la ruta en la base de datos
+                // Elimina físicamente la imagen
+                if (Files.exists(rutaImagen)) {
+                    Files.delete(rutaImagen);
+                } else {
+                    throw new RuntimeException("El archivo no existe en la ruta especificada: " + rutaImagen);
+                }
+                // Elimina la referencia a la imagen en la base de datos
+                empleado.setRutaImagen(null);
                 empleadoRepository.save(empleado);
             } catch (IOException e) {
                 throw new RuntimeException("Error al eliminar la imagen: " + e.getMessage());
@@ -118,6 +124,7 @@ public class EmpleadoService {
             throw new RuntimeException("El empleado no tiene una imagen asociada");
         }
     }
+
 
     public void modificarImagen(String cedula, MultipartFile nuevaImagen) throws IOException {
         Empleado empleado = empleadoRepository.findByCedula(cedula)
