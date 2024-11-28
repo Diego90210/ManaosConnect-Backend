@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -61,6 +62,27 @@ public class EmpleadoController {
         }
     }
 
+    @DeleteMapping("/{cedula}/eliminarImagen")
+    public ResponseEntity<String> eliminarImagen(@PathVariable String cedula) {
+        try {
+            empleadoService.eliminarImagen(cedula);
+            return ResponseEntity.ok("Imagen eliminada exitosamente");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/{cedula}/modificarImagen")
+    public ResponseEntity<String> modificarImagen(@PathVariable String cedula, @RequestParam("imagen") MultipartFile nuevaImagen) {
+        try {
+            empleadoService.modificarImagen(cedula, nuevaImagen);
+            return ResponseEntity.ok("Imagen actualizada exitosamente");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la imagen");
+        }
+    }
 }
 
 

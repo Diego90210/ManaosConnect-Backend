@@ -100,6 +100,46 @@ public class EmpleadoService {
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
         empleadoRepository.delete(empleado);
     }
+
+    public void eliminarImagen(String cedula) {
+        Empleado empleado = empleadoRepository.findByCedula(cedula)
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
+
+        if (empleado.getRutaImagen() != null) {
+            Path rutaImagen = Paths.get(empleado.getRutaImagen());
+            try {
+                Files.deleteIfExists(rutaImagen);
+                empleado.setRutaImagen(null); // Limpiar la ruta en la base de datos
+                empleadoRepository.save(empleado);
+            } catch (IOException e) {
+                throw new RuntimeException("Error al eliminar la imagen: " + e.getMessage());
+            }
+        } else {
+            throw new RuntimeException("El empleado no tiene una imagen asociada");
+        }
+    }
+
+    public void modificarImagen(String cedula, MultipartFile nuevaImagen) throws IOException {
+        Empleado empleado = empleadoRepository.findByCedula(cedula)
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
+
+        // Eliminar la imagen existente, si la hay
+        if (empleado.getRutaImagen() != null) {
+            Path rutaImagenAnterior = Paths.get(empleado.getRutaImagen());
+            Files.deleteIfExists(rutaImagenAnterior);
+        }
+
+        // Guardar la nueva imagen
+        String nombreArchivo = cedula + "_" + nuevaImagen.getOriginalFilename();
+        Path rutaNuevaImagen = Paths.get("C:/imagenes_rostros/" + nombreArchivo);
+        Files.write(rutaNuevaImagen, nuevaImagen.getBytes());
+
+        // Actualizar la ruta en el empleado
+        empleado.setRutaImagen(rutaNuevaImagen.toString());
+        empleadoRepository.save(empleado);
+    }
+
+
 }
 
 
