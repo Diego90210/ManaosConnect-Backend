@@ -18,17 +18,19 @@ public class ConsumoController {
 
     // Obtener todos los consumos
     @GetMapping
-    public ResponseEntity<List<Consumo>> obtenerTodosLosConsumos() {
-        List<Consumo> consumos = consumoService.obtenerTodosLosConsumos();
+    public ResponseEntity<List<ConsumoDTO>> obtenerTodosLosConsumos() {
+        List<ConsumoDTO> consumos = consumoService.obtenerTodosLosConsumos();
         return ResponseEntity.ok(consumos);
     }
 
+
     // Obtener consumos por empleado
     @GetMapping("/empleado/{cedula}")
-    public ResponseEntity<List<Consumo>> obtenerConsumosPorEmpleado(@PathVariable String cedula) {
-        List<Consumo> consumos = consumoService.obtenerConsumosPorEmpleado(cedula);
+    public ResponseEntity<List<ConsumoDTO>> obtenerConsumosPorEmpleado(@PathVariable String cedula) {
+        List<ConsumoDTO> consumos = consumoService.obtenerConsumosPorEmpleado(cedula);
         return ResponseEntity.ok(consumos);
     }
+
 
 
     // Crear un nuevo consumo

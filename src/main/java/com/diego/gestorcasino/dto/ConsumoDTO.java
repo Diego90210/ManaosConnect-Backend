@@ -2,13 +2,14 @@ package com.diego.gestorcasino.dto;
 
 import java.util.List;
 
-public class ConsumoDTO { // Cambiar a public
+public class ConsumoDTO {
+
     private int id;
     private String cedulaEmpleado;
-    private String nombreEmpleado;
-    private String rutaImagenEmpleado;
     private String fecha;
     private double total;
+    private String nombreEmpleado;
+    private String rutaImagenEmpleado;
     private List<PlatoConsumoDTO> platosConsumidos;
 
     // Getters y Setters
@@ -26,22 +27,6 @@ public class ConsumoDTO { // Cambiar a public
 
     public void setCedulaEmpleado(String cedulaEmpleado) {
         this.cedulaEmpleado = cedulaEmpleado;
-    }
-
-    public String getNombreEmpleado() {
-        return nombreEmpleado;
-    }
-
-    public void setNombreEmpleado(String nombreEmpleado) {
-        this.nombreEmpleado = nombreEmpleado;
-    }
-
-    public String getRutaImagenEmpleado() {
-        return rutaImagenEmpleado;
-    }
-
-    public void setRutaImagenEmpleado(String rutaImagenEmpleado) {
-        this.rutaImagenEmpleado = rutaImagenEmpleado;
     }
 
     public String getFecha() {
@@ -67,5 +52,33 @@ public class ConsumoDTO { // Cambiar a public
     public void setPlatosConsumidos(List<PlatoConsumoDTO> platosConsumidos) {
         this.platosConsumidos = platosConsumidos;
     }
-}
 
+    public String getNombreEmpleado() {
+        return nombreEmpleado;
+    }
+
+    public void setNombreEmpleado(String nombreEmpleado) {
+        this.nombreEmpleado = nombreEmpleado;
+    }
+
+    public String getRutaImagenEmpleado() {
+        return rutaImagenEmpleado;
+    }
+
+    public void setRutaImagenEmpleado(String rutaImagenEmpleado) {
+        this.rutaImagenEmpleado = rutaImagenEmpleado;
+    }
+
+    @Override
+    public String toString() {
+        return "ConsumoDTO{" +
+                "id=" + id +
+                ", cedulaEmpleado='" + cedulaEmpleado + '\'' +
+                ", fecha='" + fecha + '\'' +
+                ", total=" + total +
+                ", nombreEmpleado='" + nombreEmpleado + '\'' +
+                ", rutaImagenEmpleado='" + rutaImagenEmpleado + '\'' +
+                ", platosConsumidos=" + platosConsumidos +
+                '}';
+    }
+}
