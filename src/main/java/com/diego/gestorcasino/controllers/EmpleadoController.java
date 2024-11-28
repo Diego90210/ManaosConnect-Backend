@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -49,6 +50,17 @@ public class EmpleadoController {
         empleadoService.eliminarEmpleado(cedula);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{cedula}/subirImagen")
+    public ResponseEntity<String> subirImagen(@PathVariable String cedula, @RequestParam("imagen") MultipartFile archivo) {
+        try {
+            empleadoService.guardarImagen(cedula, archivo);
+            return ResponseEntity.ok("Imagen subida exitosamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al subir la imagen: " + e.getMessage());
+        }
+    }
+
 }
 
 

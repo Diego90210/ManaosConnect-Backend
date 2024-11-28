@@ -2,10 +2,11 @@ package com.diego.gestorcasino.dto;
 
 import java.util.List;
 
-public class ConsumoDTO {
-
+public class ConsumoDTO { // Cambiar a public
     private int id;
     private String cedulaEmpleado;
+    private String nombreEmpleado;
+    private String rutaImagenEmpleado;
     private String fecha;
     private double total;
     private List<PlatoConsumoDTO> platosConsumidos;
@@ -25,6 +26,22 @@ public class ConsumoDTO {
 
     public void setCedulaEmpleado(String cedulaEmpleado) {
         this.cedulaEmpleado = cedulaEmpleado;
+    }
+
+    public String getNombreEmpleado() {
+        return nombreEmpleado;
+    }
+
+    public void setNombreEmpleado(String nombreEmpleado) {
+        this.nombreEmpleado = nombreEmpleado;
+    }
+
+    public String getRutaImagenEmpleado() {
+        return rutaImagenEmpleado;
+    }
+
+    public void setRutaImagenEmpleado(String rutaImagenEmpleado) {
+        this.rutaImagenEmpleado = rutaImagenEmpleado;
     }
 
     public String getFecha() {
@@ -52,24 +69,3 @@ public class ConsumoDTO {
     }
 }
 
-class PlatoConsumoDTO {
-    private String nombrePlato;
-    private int cantidad;
-
-    // Getters y Setters
-    public String getNombrePlato() {
-        return nombrePlato;
-    }
-
-    public void setNombrePlato(String nombrePlato) {
-        this.nombrePlato = nombrePlato;
-    }
-
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
-    }
-}
