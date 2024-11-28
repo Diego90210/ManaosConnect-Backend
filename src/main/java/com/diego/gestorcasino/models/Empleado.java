@@ -17,6 +17,9 @@ public class Empleado {
     @Column(nullable = false)
     private String telefono;
 
+    @Column(nullable = true) // Ruta de la imagen, puede ser nula inicialmente
+    private String rutaImagen;
+
     public String getCedula() {
         return cedula;
     }
@@ -49,6 +52,14 @@ public class Empleado {
         return nombre;
     }
 
+    public String getRutaImagen() {
+        return rutaImagen;
+    }
+
+    public void setRutaImagen(String rutaImagen) {
+        this.rutaImagen = rutaImagen;
+    }
+
     @Override
     public String toString() {
         return "Empleado{" +
@@ -56,6 +67,7 @@ public class Empleado {
                 ", nombre='" + nombre + '\'' +
                 ", empresaNIT='" + empresaNIT + '\'' +
                 ", telefono='" + telefono + '\'' +
+                ", rutaImagen='" + rutaImagen + '\'' +
                 '}';
     }
 }

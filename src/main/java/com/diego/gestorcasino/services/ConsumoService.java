@@ -1,5 +1,8 @@
 package com.diego.gestorcasino.services;
 
+import com.diego.gestorcasino.dto.ConsumoDTO;
+import com.diego.gestorcasino.dto.PlatoConsumoDTO;
+import com.diego.gestorcasino.models.Empleado;
 import com.diego.gestorcasino.models.Plato;
 import com.diego.gestorcasino.models.PlatoConsumo;
 import com.diego.gestorcasino.models.Consumo;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ConsumoService {
@@ -33,11 +37,11 @@ public class ConsumoService {
         return consumoRepository.findByCedulaEmpleado(cedulaEmpleado);
     }
 
-    // Obtener un consumo por su ID
-    public Consumo obtenerConsumoPorId(int id) {
-        return consumoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Consumo no encontrado con id: " + id));
-    }
+//    // Obtener un consumo por su ID
+//    public Consumo obtenerConsumoPorId(int id) {
+//        return consumoRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Consumo no encontrado con id: " + id));
+//    }
 
     // Añadir un nuevo consumo
     public Consumo anadirConsumo(String cedulaEmpleado, Consumo consumo) {
@@ -114,4 +118,31 @@ public class ConsumoService {
                 .orElseThrow(() -> new RuntimeException("Consumo no encontrado con id: " + id));
         consumoRepository.delete(consumo);
     }
+
+    public ConsumoDTO obtenerConsumoPorId(int id) {
+        Consumo consumo = consumoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Consumo no encontrado con id: " + id));
+
+        Empleado empleado = empleadoRepository.findByCedula(consumo.getCedulaEmpleado())
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + consumo.getCedulaEmpleado()));
+
+        ConsumoDTO consumoDTO = new ConsumoDTO();
+        consumoDTO.setId(consumo.getId());
+        consumoDTO.setCedulaEmpleado(empleado.getCedula());
+        consumoDTO.setNombreEmpleado(empleado.getNombre());
+        consumoDTO.setRutaImagenEmpleado(empleado.getRutaImagen());
+        consumoDTO.setFecha(consumo.getFecha().toString());
+        consumoDTO.setTotal(consumo.getTotal());
+        consumoDTO.setPlatosConsumidos(consumo.getPlatosConsumidos().stream()
+                .map(platoConsumo -> {
+                    PlatoConsumoDTO platoDTO = new PlatoConsumoDTO();
+                    platoDTO.setNombrePlato(platoConsumo.getNombrePlato());
+                    platoDTO.setCantidad(platoConsumo.getCantidad());
+                    return platoDTO;
+                })
+                .collect(Collectors.toList()));
+
+        return consumoDTO;
+    }
+
 }
