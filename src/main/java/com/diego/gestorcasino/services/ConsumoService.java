@@ -82,21 +82,44 @@ public class ConsumoService {
         Consumo consumoExistente = consumoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Consumo no encontrado con id: " + id));
 
-        // Actualizar la fecha
+        // Actualizar la fecha del consumo
         consumoExistente.setFecha(detallesConsumo.getFecha());
 
-        // Actualizar los platos consumidos
-        consumoExistente.setPlatosConsumidos(detallesConsumo.getPlatosConsumidos());
+        // Combinar platos existentes con los nuevos
+        List<PlatoConsumo> platosExistentes = consumoExistente.getPlatosConsumidos();
+        List<PlatoConsumo> platosNuevos = detallesConsumo.getPlatosConsumidos();
 
-        // Recalcular el total basado en los nombres de los platos consumidos
-        double total = consumoExistente.getPlatosConsumidos()
-                .stream()
+        for (PlatoConsumo platoNuevo : platosNuevos) {
+            // Buscar el plato por nombre en los platos existentes
+            PlatoConsumo platoExistente = platosExistentes.stream()
+                    .filter(p -> p.getNombrePlato().equalsIgnoreCase(platoNuevo.getNombrePlato()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (platoExistente != null) {
+                // Si el plato ya existe, actualizar la cantidad
+                platoExistente.setCantidad(platoExistente.getCantidad() + platoNuevo.getCantidad());
+            } else {
+                // Si es un nuevo plato, verificar su existencia en la base de datos
+                Plato plato = platoRepository.findByNombreIgnoreCase(platoNuevo.getNombrePlato())
+                        .orElseThrow(() -> new RuntimeException("Plato no encontrado con nombre: " + platoNuevo.getNombrePlato()));
+
+                // Crear una nueva relación entre el consumo y el plato
+                platoNuevo.setConsumo(consumoExistente);
+                platoNuevo.setNombrePlato(plato.getNombre());
+                platosExistentes.add(platoNuevo);
+            }
+        }
+
+        // Actualizar la lista de platos consumidos en el consumo existente
+        consumoExistente.setPlatosConsumidos(platosExistentes);
+
+        // Recalcular el total basado en los platos consumidos
+        double total = platosExistentes.stream()
                 .mapToDouble(platoConsumo -> {
-                    // Buscar el plato por nombre
                     Plato plato = platoRepository.findByNombreIgnoreCase(platoConsumo.getNombrePlato())
                             .orElseThrow(() -> new RuntimeException("Plato no encontrado con nombre: " + platoConsumo.getNombrePlato()));
 
-                    // Calcular subtotal por plato
                     return plato.getPrecio() * platoConsumo.getCantidad();
                 })
                 .sum();
@@ -105,6 +128,7 @@ public class ConsumoService {
 
         return consumoRepository.save(consumoExistente);
     }
+
 
 
     // Eliminar un consumo
