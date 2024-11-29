@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/consumos")
@@ -24,13 +25,11 @@ public class ConsumoController {
     }
 
 
-    // Obtener consumos por empleado
     @GetMapping("/empleado/{cedula}")
     public ResponseEntity<List<ConsumoDTO>> obtenerConsumosPorEmpleado(@PathVariable String cedula) {
-        List<ConsumoDTO> consumos = consumoService.obtenerConsumosPorEmpleado(cedula);
-        return ResponseEntity.ok(consumos);
+        List<ConsumoDTO> consumosDTO = consumoService.obtenerConsumosPorEmpleado(cedula);
+        return ResponseEntity.ok(consumosDTO);
     }
-
 
 
     // Crear un nuevo consumo
@@ -63,8 +62,9 @@ public class ConsumoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ConsumoDTO> obtenerConsumoPorId(@PathVariable int id) {
-        ConsumoDTO consumo = consumoService.obtenerConsumoPorId(id);
-        return ResponseEntity.ok(consumo);
+        ConsumoDTO consumoDTO = consumoService.obtenerConsumoPorId(id);
+        return ResponseEntity.ok(consumoDTO);
     }
+
 
 }

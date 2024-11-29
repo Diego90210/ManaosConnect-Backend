@@ -146,6 +146,27 @@ public class EmpleadoService {
         empleadoRepository.save(empleado);
     }
 
+    public Empleado anadirEmpleadoConImagen(Empleado empleado, MultipartFile imagen) throws IOException {
+        // Validar si la empresa existe
+        empresaRepository.findByNit(empleado.getEmpresaNIT())
+                .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + empleado.getEmpresaNIT()));
+
+        // Validar si ya existe un empleado con la misma cédula
+        if (empleadoRepository.findByCedula(empleado.getCedula()).isPresent()) {
+            throw new RuntimeException("Ya existe un empleado con la cédula: " + empleado.getCedula());
+        }
+
+        // Guardar la imagen en el sistema de archivos
+        String nombreArchivo = empleado.getCedula() + "_" + imagen.getOriginalFilename();
+        Path rutaImagen = Paths.get("C:/imagenes_rostros/" + nombreArchivo);
+        Files.write(rutaImagen, imagen.getBytes());
+
+        // Asociar la ruta de la imagen al empleado
+        empleado.setRutaImagen(rutaImagen.toString());
+
+        // Guardar el empleado en la base de datos
+        return empleadoRepository.save(empleado);
+    }
 
 }
 

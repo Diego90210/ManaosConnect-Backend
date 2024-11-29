@@ -55,19 +55,24 @@ public class ConsumoService {
     }
 
     public List<ConsumoDTO> obtenerConsumosPorEmpleado(String cedulaEmpleado) {
+        // Validar que el empleado existe antes de buscar los consumos
+        Empleado empleado = empleadoRepository.findByCedula(cedulaEmpleado)
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedulaEmpleado));
+
+        // Obtener consumos asociados al empleado
         List<Consumo> consumos = consumoRepository.findByCedulaEmpleado(cedulaEmpleado);
 
+        // Convertir cada consumo a ConsumoDTO
         return consumos.stream().map(consumo -> {
-            Empleado empleado = empleadoRepository.findByCedula(consumo.getCedulaEmpleado())
-                    .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + consumo.getCedulaEmpleado()));
-
             ConsumoDTO consumoDTO = new ConsumoDTO();
             consumoDTO.setId(consumo.getId());
             consumoDTO.setCedulaEmpleado(empleado.getCedula());
             consumoDTO.setNombreEmpleado(empleado.getNombre());
-            consumoDTO.setRutaImagenEmpleado(empleado.getRutaImagen());
+            consumoDTO.setRutaImagenEmpleado(empleado.getRutaImagen()); // Ruta de la imagen
             consumoDTO.setFecha(consumo.getFecha().toString());
             consumoDTO.setTotal(consumo.getTotal());
+
+            // Convertir los platos consumidos a PlatoConsumoDTO
             consumoDTO.setPlatosConsumidos(consumo.getPlatosConsumidos().stream()
                     .map(platoConsumo -> {
                         PlatoConsumoDTO platoDTO = new PlatoConsumoDTO();
@@ -82,11 +87,6 @@ public class ConsumoService {
     }
 
 
-//    // Obtener un consumo por su ID
-//    public Consumo obtenerConsumoPorId(int id) {
-//        return consumoRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Consumo no encontrado con id: " + id));
-//    }
 
     // Añadir un nuevo consumo
     public Consumo anadirConsumo(String cedulaEmpleado, Consumo consumo) {
@@ -213,5 +213,29 @@ public class ConsumoService {
 
         return consumoDTO;
     }
+
+    public ConsumoDTO convertirAConsumoDTO(Consumo consumo) {
+        Empleado empleado = empleadoRepository.findByCedula(consumo.getCedulaEmpleado())
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + consumo.getCedulaEmpleado()));
+
+        ConsumoDTO consumoDTO = new ConsumoDTO();
+        consumoDTO.setId(consumo.getId());
+        consumoDTO.setCedulaEmpleado(empleado.getCedula());
+        consumoDTO.setNombreEmpleado(empleado.getNombre());
+        consumoDTO.setRutaImagenEmpleado("/empleados/" + empleado.getCedula() + "/imagen"); // URL de la imagen
+        consumoDTO.setFecha(consumo.getFecha().toString());
+        consumoDTO.setTotal(consumo.getTotal());
+        consumoDTO.setPlatosConsumidos(consumo.getPlatosConsumidos().stream()
+                .map(platoConsumo -> {
+                    PlatoConsumoDTO platoDTO = new PlatoConsumoDTO();
+                    platoDTO.setNombrePlato(platoConsumo.getNombrePlato());
+                    platoDTO.setCantidad(platoConsumo.getCantidad());
+                    return platoDTO;
+                })
+                .collect(Collectors.toList()));
+
+        return consumoDTO;
+    }
+
 
 }

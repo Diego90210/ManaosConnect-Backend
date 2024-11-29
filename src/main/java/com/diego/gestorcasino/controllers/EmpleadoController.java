@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -33,9 +36,17 @@ public class EmpleadoController {
 
     // anadir un nuevo empleado
     @PostMapping
-    public ResponseEntity<Empleado> anadirEmpleado(@RequestBody Empleado empleado) {
-        Empleado nuevoEmpleado = empleadoService.anadirEmpleado(empleado);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoEmpleado);
+    public ResponseEntity<Empleado> anadirEmpleado(
+            @RequestPart("empleado") Empleado empleado,
+            @RequestPart("imagen") MultipartFile imagen) {
+        try {
+            Empleado nuevoEmpleado = empleadoService.anadirEmpleadoConImagen(empleado, imagen);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoEmpleado);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     // Actualizar un empleado existente
@@ -83,6 +94,30 @@ public class EmpleadoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la imagen");
         }
     }
+
+    @GetMapping("/{cedula}/imagen")
+    public ResponseEntity<byte[]> obtenerImagenEmpleado(@PathVariable String cedula) {
+        Empleado empleado = empleadoService.obtenerEmpleadoPorCedula(cedula);
+
+        if (empleado.getRutaImagen() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            Path rutaImagen = Paths.get(empleado.getRutaImagen());
+            byte[] imagen = Files.readAllBytes(rutaImagen);
+
+            // Determinar el tipo de contenido (por ejemplo, image/jpeg)
+            String contentType = Files.probeContentType(rutaImagen);
+
+            return ResponseEntity.ok()
+                    .header("Content-Type", contentType)
+                    .body(imagen);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }
 
 
