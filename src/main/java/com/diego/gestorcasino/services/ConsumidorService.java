@@ -1,8 +1,8 @@
 package com.diego.gestorcasino.services;
 
-import com.diego.gestorcasino.models.Empleado;
-import com.diego.gestorcasino.repositories.EmpleadoRepository;
-import com.diego.gestorcasino.repositories.EmpresaRepository;
+import com.diego.gestorcasino.models.Consumidor;
+import com.diego.gestorcasino.repositories.ConsumidorRepository;
+import com.diego.gestorcasino.repositories.EmpresaClienteRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,13 +17,13 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @Service
-public class EmpleadoService {
+public class ConsumidorService {
 
     @Autowired
-    private EmpleadoRepository empleadoRepository;
+    private ConsumidorRepository consumidorRepository;
 
     @Autowired
-    private EmpresaRepository empresaRepository; // Agrega el repositorio de Empresa
+    private EmpresaClienteRepository empresaClienteRepository; // Agrega el repositorio de Empresa
 
     @Value("${directorio.imagenes}")
     private String directorioImagenes;
@@ -37,12 +37,12 @@ public class EmpleadoService {
     }
 
     // Obtener todos los empleados
-    public List<Empleado> obtenerTodosLosEmpleados() {
-        return empleadoRepository.findAll();
+    public List<Consumidor> obtenerTodosLosEmpleados() {
+        return consumidorRepository.findAll();
     }
 
     public void guardarImagen(String cedula, MultipartFile archivo) throws IOException {
-        Empleado empleado = empleadoRepository.findByCedula(cedula)
+        Consumidor consumidor = consumidorRepository.findByCedula(cedula)
                 .orElseThrow(() -> new IllegalArgumentException("Empleado no encontrado con cédula: " + cedula));
 
         String contentType = archivo.getContentType();
@@ -54,59 +54,59 @@ public class EmpleadoService {
         Path rutaArchivo = Paths.get(directorioImagenes, nombreArchivo);
         Files.write(rutaArchivo, archivo.getBytes());
 
-        empleado.setRutaImagen(rutaArchivo.toAbsolutePath().toString());
-        empleadoRepository.save(empleado);
+        consumidor.setRutaImagen(rutaArchivo.toAbsolutePath().toString());
+        consumidorRepository.save(consumidor);
     }
 
     // Obtener un empleado por cédula
-    public Empleado obtenerEmpleadoPorCedula(String cedula) {
-        return empleadoRepository.findByCedula(cedula)
+    public Consumidor obtenerEmpleadoPorCedula(String cedula) {
+        return consumidorRepository.findByCedula(cedula)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
     }
 
     // anadir un nuevo empleado
-    public Empleado anadirEmpleado(Empleado empleado) {
+    public Consumidor anadirEmpleado(Consumidor consumidor) {
         // Validar si la empresa existe por NIT
-        empresaRepository.findByNit(empleado.getEmpresaNIT())
-                .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + empleado.getEmpresaNIT()));
+        empresaClienteRepository.findByNit(consumidor.getEmpresaNIT())
+                .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + consumidor.getEmpresaNIT()));
 
-        if (empleadoRepository.findByCedula(empleado.getCedula()).isPresent()) {
-            throw new RuntimeException("Ya existe un empleado con la cédula: " + empleado.getCedula());
+        if (consumidorRepository.findByCedula(consumidor.getCedula()).isPresent()) {
+            throw new RuntimeException("Ya existe un empleado con la cédula: " + consumidor.getCedula());
         }
 
-        return empleadoRepository.save(empleado);
+        return consumidorRepository.save(consumidor);
     }
 
     // Actualizar un empleado
-    public Empleado actualizarEmpleado(String cedula, Empleado detallesEmpleado) {
-        Empleado empleadoExistente = empleadoRepository.findByCedula(cedula)
+    public Consumidor actualizarEmpleado(String cedula, Consumidor detallesConsumidor) {
+        Consumidor consumidorExistente = consumidorRepository.findByCedula(cedula)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
 
 
         // Validar si la empresa existe
-        empresaRepository.findByNit(detallesEmpleado.getEmpresaNIT())
-                .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + detallesEmpleado.getEmpresaNIT()));
+        empresaClienteRepository.findByNit(detallesConsumidor.getEmpresaNIT())
+                .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + detallesConsumidor.getEmpresaNIT()));
 
-        empleadoExistente.setNombre(detallesEmpleado.getNombre());
-        empleadoExistente.setEmpresaNIT(detallesEmpleado.getEmpresaNIT());
-        empleadoExistente.setTelefono(detallesEmpleado.getTelefono());
+        consumidorExistente.setNombre(detallesConsumidor.getNombre());
+        consumidorExistente.setEmpresaNIT(detallesConsumidor.getEmpresaNIT());
+        consumidorExistente.setTelefono(detallesConsumidor.getTelefono());
 
-        return empleadoRepository.save(empleadoExistente);
+        return consumidorRepository.save(consumidorExistente);
     }
 
     // Borrar un empleado
     public void eliminarEmpleado(String cedula) {
-        Empleado empleado = empleadoRepository.findByCedula(cedula)
+        Consumidor consumidor = consumidorRepository.findByCedula(cedula)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
-        empleadoRepository.delete(empleado);
+        consumidorRepository.delete(consumidor);
     }
 
     public void eliminarImagen(String cedula) {
-        Empleado empleado = empleadoRepository.findByCedula(cedula)
+        Consumidor consumidor = consumidorRepository.findByCedula(cedula)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
 
-        if (empleado.getRutaImagen() != null) {
-            Path rutaImagen = Paths.get(empleado.getRutaImagen());
+        if (consumidor.getRutaImagen() != null) {
+            Path rutaImagen = Paths.get(consumidor.getRutaImagen());
             try {
                 // Elimina físicamente la imagen
                 if (Files.exists(rutaImagen)) {
@@ -115,8 +115,8 @@ public class EmpleadoService {
                     throw new RuntimeException("El archivo no existe en la ruta especificada: " + rutaImagen);
                 }
                 // Elimina la referencia a la imagen en la base de datos
-                empleado.setRutaImagen(null);
-                empleadoRepository.save(empleado);
+                consumidor.setRutaImagen(null);
+                consumidorRepository.save(consumidor);
             } catch (IOException e) {
                 throw new RuntimeException("Error al eliminar la imagen: " + e.getMessage());
             }
@@ -127,12 +127,12 @@ public class EmpleadoService {
 
 
     public void modificarImagen(String cedula, MultipartFile nuevaImagen) throws IOException {
-        Empleado empleado = empleadoRepository.findByCedula(cedula)
+        Consumidor consumidor = consumidorRepository.findByCedula(cedula)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
 
         // Eliminar la imagen existente, si la hay
-        if (empleado.getRutaImagen() != null) {
-            Path rutaImagenAnterior = Paths.get(empleado.getRutaImagen());
+        if (consumidor.getRutaImagen() != null) {
+            Path rutaImagenAnterior = Paths.get(consumidor.getRutaImagen());
             Files.deleteIfExists(rutaImagenAnterior);
         }
 
@@ -142,30 +142,30 @@ public class EmpleadoService {
         Files.write(rutaNuevaImagen, nuevaImagen.getBytes());
 
         // Actualizar la ruta en el empleado
-        empleado.setRutaImagen(rutaNuevaImagen.toString());
-        empleadoRepository.save(empleado);
+        consumidor.setRutaImagen(rutaNuevaImagen.toString());
+        consumidorRepository.save(consumidor);
     }
 
-    public Empleado anadirEmpleadoConImagen(Empleado empleado, MultipartFile imagen) throws IOException {
+    public Consumidor anadirEmpleadoConImagen(Consumidor consumidor, MultipartFile imagen) throws IOException {
         // Validar si la empresa existe
-        empresaRepository.findByNit(empleado.getEmpresaNIT())
-                .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + empleado.getEmpresaNIT()));
+        empresaClienteRepository.findByNit(consumidor.getEmpresaNIT())
+                .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + consumidor.getEmpresaNIT()));
 
         // Validar si ya existe un empleado con la misma cédula
-        if (empleadoRepository.findByCedula(empleado.getCedula()).isPresent()) {
-            throw new RuntimeException("Ya existe un empleado con la cédula: " + empleado.getCedula());
+        if (consumidorRepository.findByCedula(consumidor.getCedula()).isPresent()) {
+            throw new RuntimeException("Ya existe un empleado con la cédula: " + consumidor.getCedula());
         }
 
         // Guardar la imagen en el sistema de archivos
-        String nombreArchivo = empleado.getCedula() + "_" + imagen.getOriginalFilename();
+        String nombreArchivo = consumidor.getCedula() + "_" + imagen.getOriginalFilename();
         Path rutaImagen = Paths.get("C:/imagenes_rostros/" + nombreArchivo);
         Files.write(rutaImagen, imagen.getBytes());
 
         // Asociar la ruta de la imagen al empleado
-        empleado.setRutaImagen(rutaImagen.toString());
+        consumidor.setRutaImagen(rutaImagen.toString());
 
         // Guardar el empleado en la base de datos
-        return empleadoRepository.save(empleado);
+        return consumidorRepository.save(consumidor);
     }
 
 }

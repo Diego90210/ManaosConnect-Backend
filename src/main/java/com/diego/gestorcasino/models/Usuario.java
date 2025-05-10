@@ -2,6 +2,7 @@ package com.diego.gestorcasino.models;
 
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -48,7 +49,7 @@ public class Usuario implements UserDetails {
     // Implementación de UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(() -> "ROLE_" + rol.name());
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + rol.name()));
     }
 
     @Override

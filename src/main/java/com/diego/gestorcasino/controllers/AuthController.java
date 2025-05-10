@@ -31,7 +31,7 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
 
-            Usuario usuario = usuarioRepository.findByCorreo(request.getEmail())
+            Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
             String token = jwtUtil.generateToken(usuario.getId(), usuario.getRol().name());

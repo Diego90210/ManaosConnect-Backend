@@ -2,12 +2,12 @@ package com.diego.gestorcasino.services;
 
 import com.diego.gestorcasino.dto.ConsumoDTO;
 import com.diego.gestorcasino.dto.PlatoConsumoDTO;
-import com.diego.gestorcasino.models.Empleado;
+import com.diego.gestorcasino.models.Consumidor;
 import com.diego.gestorcasino.models.Plato;
 import com.diego.gestorcasino.models.PlatoConsumo;
 import com.diego.gestorcasino.models.Consumo;
 import com.diego.gestorcasino.repositories.ConsumoRepository;
-import com.diego.gestorcasino.repositories.EmpleadoRepository;
+import com.diego.gestorcasino.repositories.ConsumidorRepository;
 import com.diego.gestorcasino.repositories.PlatoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class ConsumoService {
     private ConsumoRepository consumoRepository;
 
     @Autowired
-    private EmpleadoRepository empleadoRepository;
+    private ConsumidorRepository consumidorRepository;
 
     @Autowired
     private PlatoRepository platoRepository;
@@ -31,14 +31,14 @@ public class ConsumoService {
         List<Consumo> consumos = consumoRepository.findAll();
 
         return consumos.stream().map(consumo -> {
-            Empleado empleado = empleadoRepository.findByCedula(consumo.getCedulaEmpleado())
+            Consumidor consumidor = consumidorRepository.findByCedula(consumo.getCedulaEmpleado())
                     .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + consumo.getCedulaEmpleado()));
 
             ConsumoDTO consumoDTO = new ConsumoDTO();
             consumoDTO.setId(consumo.getId());
-            consumoDTO.setCedulaEmpleado(empleado.getCedula());
-            consumoDTO.setNombreEmpleado(empleado.getNombre());
-            consumoDTO.setRutaImagenEmpleado(empleado.getRutaImagen());
+            consumoDTO.setCedulaEmpleado(consumidor.getCedula());
+            consumoDTO.setNombreEmpleado(consumidor.getNombre());
+            consumoDTO.setRutaImagenEmpleado(consumidor.getRutaImagen());
             consumoDTO.setFecha(consumo.getFecha().toString());
             consumoDTO.setTotal(consumo.getTotal());
             consumoDTO.setPlatosConsumidos(consumo.getPlatosConsumidos().stream()
@@ -56,7 +56,7 @@ public class ConsumoService {
 
     public List<ConsumoDTO> obtenerConsumosPorEmpleado(String cedulaEmpleado) {
         // Validar que el empleado existe antes de buscar los consumos
-        Empleado empleado = empleadoRepository.findByCedula(cedulaEmpleado)
+        Consumidor consumidor = consumidorRepository.findByCedula(cedulaEmpleado)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedulaEmpleado));
 
         // Obtener consumos asociados al empleado
@@ -66,9 +66,9 @@ public class ConsumoService {
         return consumos.stream().map(consumo -> {
             ConsumoDTO consumoDTO = new ConsumoDTO();
             consumoDTO.setId(consumo.getId());
-            consumoDTO.setCedulaEmpleado(empleado.getCedula());
-            consumoDTO.setNombreEmpleado(empleado.getNombre());
-            consumoDTO.setRutaImagenEmpleado(empleado.getRutaImagen()); // Ruta de la imagen
+            consumoDTO.setCedulaEmpleado(consumidor.getCedula());
+            consumoDTO.setNombreEmpleado(consumidor.getNombre());
+            consumoDTO.setRutaImagenEmpleado(consumidor.getRutaImagen()); // Ruta de la imagen
             consumoDTO.setFecha(consumo.getFecha().toString());
             consumoDTO.setTotal(consumo.getTotal());
 
@@ -91,7 +91,7 @@ public class ConsumoService {
     // Añadir un nuevo consumo
     public Consumo anadirConsumo(String cedulaEmpleado, Consumo consumo) {
         // Verificar si el empleado existe
-        if (empleadoRepository.findByCedula(cedulaEmpleado).isEmpty()) {
+        if (consumidorRepository.findByCedula(cedulaEmpleado).isEmpty()) {
             throw new RuntimeException("Empleado no encontrado con cédula: " + cedulaEmpleado);
         }
         consumo.setCedulaEmpleado(cedulaEmpleado);
@@ -192,14 +192,14 @@ public class ConsumoService {
         Consumo consumo = consumoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Consumo no encontrado con id: " + id));
 
-        Empleado empleado = empleadoRepository.findByCedula(consumo.getCedulaEmpleado())
+        Consumidor consumidor = consumidorRepository.findByCedula(consumo.getCedulaEmpleado())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + consumo.getCedulaEmpleado()));
 
         ConsumoDTO consumoDTO = new ConsumoDTO();
         consumoDTO.setId(consumo.getId());
-        consumoDTO.setCedulaEmpleado(empleado.getCedula());
-        consumoDTO.setNombreEmpleado(empleado.getNombre());
-        consumoDTO.setRutaImagenEmpleado(empleado.getRutaImagen());
+        consumoDTO.setCedulaEmpleado(consumidor.getCedula());
+        consumoDTO.setNombreEmpleado(consumidor.getNombre());
+        consumoDTO.setRutaImagenEmpleado(consumidor.getRutaImagen());
         consumoDTO.setFecha(consumo.getFecha().toString());
         consumoDTO.setTotal(consumo.getTotal());
         consumoDTO.setPlatosConsumidos(consumo.getPlatosConsumidos().stream()
@@ -215,14 +215,14 @@ public class ConsumoService {
     }
 
     public ConsumoDTO convertirAConsumoDTO(Consumo consumo) {
-        Empleado empleado = empleadoRepository.findByCedula(consumo.getCedulaEmpleado())
+        Consumidor consumidor = consumidorRepository.findByCedula(consumo.getCedulaEmpleado())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + consumo.getCedulaEmpleado()));
 
         ConsumoDTO consumoDTO = new ConsumoDTO();
         consumoDTO.setId(consumo.getId());
-        consumoDTO.setCedulaEmpleado(empleado.getCedula());
-        consumoDTO.setNombreEmpleado(empleado.getNombre());
-        consumoDTO.setRutaImagenEmpleado("/empleados/" + empleado.getCedula() + "/imagen"); // URL de la imagen
+        consumoDTO.setCedulaEmpleado(consumidor.getCedula());
+        consumoDTO.setNombreEmpleado(consumidor.getNombre());
+        consumoDTO.setRutaImagenEmpleado("/empleados/" + consumidor.getCedula() + "/imagen"); // URL de la imagen
         consumoDTO.setFecha(consumo.getFecha().toString());
         consumoDTO.setTotal(consumo.getTotal());
         consumoDTO.setPlatosConsumidos(consumo.getPlatosConsumidos().stream()

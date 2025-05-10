@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "empleados")
-public class Empleado {
+public class Consumidor {
     @Id
     private String cedula;
 

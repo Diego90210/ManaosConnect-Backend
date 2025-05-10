@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "empresas")
-public class Empresa {
+public class EmpresaCliente {
     @Id
     private String nit;
 

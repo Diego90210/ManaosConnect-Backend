@@ -40,8 +40,8 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public Optional<Usuario> buscarPorCorreo(String correo) {
-        return usuarioRepository.findByCorreo(correo);
+    public Optional<Usuario> buscarPorEmail(String email) {
+        return usuarioRepository.findByEmail(email);
     }
 
     public List<Usuario> listarTodos() {

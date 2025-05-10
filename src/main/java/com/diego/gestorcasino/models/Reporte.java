@@ -15,7 +15,7 @@ public class Reporte {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_nit", nullable = false)
-    private Empresa empresa;
+    private EmpresaCliente empresaCliente;
 
     @Column(name = "fecha_inicio", nullable = false)
     private LocalDate fechaInicio;
@@ -35,12 +35,12 @@ public class Reporte {
         this.id = id;
     }
 
-    public Empresa getEmpresa() {
-        return empresa;
+    public EmpresaCliente getEmpresaCliente() {
+        return empresaCliente;
     }
 
-    public void setEmpresa(Empresa empresa) {
-        this.empresa = empresa;
+    public void setEmpresaCliente(EmpresaCliente empresaCliente) {
+        this.empresaCliente = empresaCliente;
     }
 
     public LocalDate getFechaInicio() {
@@ -71,7 +71,7 @@ public class Reporte {
     public String toString() {
         return "Reporte{" +
                 "id=" + id +
-                ", empresa=" + empresa +
+                ", empresa=" + empresaCliente +
                 ", fechaInicio=" + fechaInicio +
                 ", fechaFin=" + fechaFin +
                 ", totalConsumos=" + totalConsumos +

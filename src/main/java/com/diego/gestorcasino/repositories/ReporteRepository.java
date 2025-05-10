@@ -8,6 +8,7 @@ import java.util.List;
 
 @Repository
 public interface ReporteRepository extends JpaRepository<Reporte, Integer> {
-    List<Reporte> findByEmpresaNit(String nit);
+    List<Reporte> findByEmpresaCliente_Nit(String nit);
 }
+
 
