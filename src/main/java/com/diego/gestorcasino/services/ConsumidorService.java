@@ -37,7 +37,7 @@ public class ConsumidorService {
     }
 
     // Obtener todos los empleados
-    public List<Consumidor> obtenerTodosLosEmpleados() {
+    public List<Consumidor> obtenerTodosLosConsumidores() {
         return consumidorRepository.findAll();
     }
 
@@ -59,26 +59,13 @@ public class ConsumidorService {
     }
 
     // Obtener un empleado por cédula
-    public Consumidor obtenerEmpleadoPorCedula(String cedula) {
+    public Consumidor obtenerConsumidorPorCedula(String cedula) {
         return consumidorRepository.findByCedula(cedula)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
     }
 
-    // anadir un nuevo empleado
-    public Consumidor anadirEmpleado(Consumidor consumidor) {
-        // Validar si la empresa existe por NIT
-        empresaClienteRepository.findByNit(consumidor.getEmpresaNIT())
-                .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + consumidor.getEmpresaNIT()));
-
-        if (consumidorRepository.findByCedula(consumidor.getCedula()).isPresent()) {
-            throw new RuntimeException("Ya existe un empleado con la cédula: " + consumidor.getCedula());
-        }
-
-        return consumidorRepository.save(consumidor);
-    }
-
     // Actualizar un empleado
-    public Consumidor actualizarEmpleado(String cedula, Consumidor detallesConsumidor) {
+    public Consumidor actualizarConsumidor(String cedula, Consumidor detallesConsumidor) {
         Consumidor consumidorExistente = consumidorRepository.findByCedula(cedula)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
 
@@ -95,7 +82,7 @@ public class ConsumidorService {
     }
 
     // Borrar un empleado
-    public void eliminarEmpleado(String cedula) {
+    public void eliminarConsumidor(String cedula) {
         Consumidor consumidor = consumidorRepository.findByCedula(cedula)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con cédula: " + cedula));
         consumidorRepository.delete(consumidor);
@@ -146,7 +133,7 @@ public class ConsumidorService {
         consumidorRepository.save(consumidor);
     }
 
-    public Consumidor anadirEmpleadoConImagen(Consumidor consumidor, MultipartFile imagen) throws IOException {
+    public Consumidor anadirConsumidorConImagen(Consumidor consumidor, MultipartFile imagen) throws IOException {
         // Validar si la empresa existe
         empresaClienteRepository.findByNit(consumidor.getEmpresaNIT())
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + consumidor.getEmpresaNIT()));

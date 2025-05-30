@@ -15,32 +15,32 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
-@RequestMapping("/empleados")
+@RequestMapping("/consumidores")
 public class ConsumidorController {
 
     @Autowired
     private ConsumidorService consumidorService;
 
-    // Obtener todos los empleados
+    // Obtener todos los consumidores
     @GetMapping
-    public List<Consumidor> obtenerTodosLosEmpleados() {
-        return consumidorService.obtenerTodosLosEmpleados();
+    public List<Consumidor> obtenerTodosLosConsumidores() {
+        return consumidorService.obtenerTodosLosConsumidores();
     }
 
-    // Obtener un empleado por cédula
+    // Obtener un consumidor por cédula
     @GetMapping("/{cedula}")
-    public ResponseEntity<Consumidor> obtenerEmpleadoPorCedula(@PathVariable String cedula) {
-        Consumidor consumidor = consumidorService.obtenerEmpleadoPorCedula(cedula);
+    public ResponseEntity<Consumidor> obtenerConsumidorPorCedula(@PathVariable String cedula) {
+        Consumidor consumidor = consumidorService.obtenerConsumidorPorCedula(cedula);
         return ResponseEntity.ok(consumidor);
     }
 
-    // anadir un nuevo empleado
+    // anadir un nuevo consumidor
     @PostMapping
-    public ResponseEntity<Consumidor> anadirEmpleado(
-            @RequestPart("empleado") Consumidor consumidor,
+    public ResponseEntity<Consumidor> anadirConsumidor(
+            @RequestPart("consumidor") Consumidor consumidor,
             @RequestPart("imagen") MultipartFile imagen) {
         try {
-            Consumidor nuevoConsumidor = consumidorService.anadirEmpleadoConImagen(consumidor, imagen);
+            Consumidor nuevoConsumidor = consumidorService.anadirConsumidorConImagen(consumidor, imagen);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevoConsumidor);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -49,17 +49,17 @@ public class ConsumidorController {
         }
     }
 
-    // Actualizar un empleado existente
+    // Actualizar un consumidor existente
     @PutMapping("/{cedula}")
-    public ResponseEntity<Consumidor> actualizarEmpleado(@PathVariable String cedula, @RequestBody Consumidor detallesConsumidor) {
-        Consumidor consumidorActualizado = consumidorService.actualizarEmpleado(cedula, detallesConsumidor);
+    public ResponseEntity<Consumidor> actualizarConsumidor(@PathVariable String cedula, @RequestBody Consumidor detallesConsumidor) {
+        Consumidor consumidorActualizado = consumidorService.actualizarConsumidor(cedula, detallesConsumidor);
         return ResponseEntity.ok(consumidorActualizado);
     }
 
-    // Eliminar un empleado
+    // Eliminar un consumidor
     @DeleteMapping("/{cedula}")
-    public ResponseEntity<Void> eliminarEmpleado(@PathVariable String cedula) {
-        consumidorService.eliminarEmpleado(cedula);
+    public ResponseEntity<Void> eliminarConsumidor(@PathVariable String cedula) {
+        consumidorService.eliminarConsumidor(cedula);
         return ResponseEntity.noContent().build();
     }
 
@@ -96,8 +96,8 @@ public class ConsumidorController {
     }
 
     @GetMapping("/{cedula}/imagen")
-    public ResponseEntity<byte[]> obtenerImagenEmpleado(@PathVariable String cedula) {
-        Consumidor consumidor = consumidorService.obtenerEmpleadoPorCedula(cedula);
+    public ResponseEntity<byte[]> obtenerImagenConsumidor(@PathVariable String cedula) {
+        Consumidor consumidor = consumidorService.obtenerConsumidorPorCedula(cedula);
 
         if (consumidor.getRutaImagen() == null) {
             return ResponseEntity.notFound().build();

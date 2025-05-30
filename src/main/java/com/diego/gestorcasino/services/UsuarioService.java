@@ -9,52 +9,46 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
-        this.usuarioRepository = usuarioRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public Usuario actualizarUsuario(Long id, Usuario usuarioActualizado) {
-        Usuario usuarioExistente = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
-
-        usuarioExistente.setEmail(usuarioActualizado.getEmail());
-        usuarioExistente.setPassword(passwordEncoder.encode(usuarioActualizado.getPassword())); // Cifrado aquí
-        usuarioExistente.setRol(usuarioActualizado.getRol());
-        usuarioExistente.setNombre(usuarioActualizado.getNombre());
-        usuarioExistente.setTelefono(usuarioActualizado.getTelefono());
-
-        return usuarioRepository.save(usuarioExistente);
-    }
+    private PasswordEncoder passwordEncoder;
 
     public Usuario guardar(Usuario usuario) {
+        if (usuarioRepository.existsById(usuario.getCedula())) {
+            throw new RuntimeException("Ya existe un usuario con la cédula: " + usuario.getCedula());
+        }
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
 
-    public Optional<Usuario> buscarPorEmail(String email) {
-        return usuarioRepository.findByEmail(email);
+    public Usuario actualizar(String cedula, Usuario actualizado) {
+        Usuario usuario = usuarioRepository.findById(cedula)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con cédula: " + cedula));
+
+        usuario.setEmail(actualizado.getEmail());
+        usuario.setPassword(passwordEncoder.encode(actualizado.getPassword()));
+        usuario.setRol(actualizado.getRol());
+
+        return usuarioRepository.save(usuario);
+    }
+
+    public void eliminar(String cedula) {
+        if (!usuarioRepository.existsById(cedula)) {
+            throw new RuntimeException("Usuario no encontrado con cédula: " + cedula);
+        }
+        usuarioRepository.deleteById(cedula);
+    }
+
+    public Optional<Usuario> buscarPorCedula(String cedula) {
+        return usuarioRepository.findByCedula(cedula);
     }
 
     public List<Usuario> listarTodos() {
         return usuarioRepository.findAll();
     }
-
-    public Optional<Usuario> buscarPorId(Long id) {
-        return usuarioRepository.findById(id);
-    }
-
-    public void eliminarPorId(Long id) {
-        usuarioRepository.deleteById(id);
-    }
-
 }
-

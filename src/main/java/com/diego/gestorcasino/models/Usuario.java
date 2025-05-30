@@ -12,7 +12,7 @@ import java.util.Collections;
 public class Usuario implements UserDetails {
 
     @Id
-    private Long id;
+    private String cedula;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -24,12 +24,18 @@ public class Usuario implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Rol rol;
 
-    private String nombre;
-    private String telefono;
+
 
     // Getters y setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+
+
+    public String getCedula() {
+        return cedula;
+    }
+
+    public void setCedula(String cedula) {
+        this.cedula = cedula;
+    }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -40,12 +46,6 @@ public class Usuario implements UserDetails {
     public Rol getRol() { return rol; }
     public void setRol(Rol rol) { this.rol = rol; }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public String getTelefono() { return telefono; }
-    public void setTelefono(String telefono) { this.telefono = telefono; }
-
     // Implementación de UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -54,7 +54,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public String getUsername() {
-        return String.valueOf(id); // Puedes cambiar a getEmail() si prefieres autenticación por correo
+        return cedula;
     }
 
     @Override
@@ -69,15 +69,4 @@ public class Usuario implements UserDetails {
     @Override
     public boolean isEnabled() { return true; }
 
-    @Override
-    public String toString() {
-        return "Usuario{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", rol=" + rol +
-                ", nombre='" + nombre + '\'' +
-                ", telefono='" + telefono + '\'' +
-                '}';
-    }
 }

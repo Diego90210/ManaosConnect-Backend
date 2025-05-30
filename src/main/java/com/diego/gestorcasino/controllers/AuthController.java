@@ -28,13 +28,15 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
             Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                    new UsernamePasswordAuthenticationToken(
+                            request.getCedula(), request.getPassword()
+                    )
             );
 
-            Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
+            Usuario usuario = usuarioRepository.findByCedula(request.getCedula())
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            String token = jwtUtil.generateToken(usuario.getId(), usuario.getRol().name());
+            String token = jwtUtil.generateToken(usuario.getCedula(), usuario.getRol().name());
 
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (AuthenticationException e) {
@@ -42,13 +44,13 @@ public class AuthController {
         }
     }
 
-    // Clases DTO internas
+    // DTO interno
     public static class LoginRequest {
-        private String email;
+        private String cedula;
         private String password;
 
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
+        public String getCedula() { return cedula; }
+        public void setCedula(String cedula) { this.cedula = cedula; }
 
         public String getPassword() { return password; }
         public void setPassword(String password) { this.password = password; }
@@ -64,4 +66,3 @@ public class AuthController {
         public String getToken() { return token; }
     }
 }
-

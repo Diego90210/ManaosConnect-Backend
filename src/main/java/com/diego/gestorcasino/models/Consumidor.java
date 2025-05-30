@@ -3,7 +3,7 @@ package com.diego.gestorcasino.models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "empleados")
+@Table(name = "consumidores")
 public class Consumidor {
     @Id
     private String cedula;
@@ -62,7 +62,7 @@ public class Consumidor {
 
     @Override
     public String toString() {
-        return "Empleado{" +
+        return "Consumidor{" +
                 "cedula='" + cedula + '\'' +
                 ", nombre='" + nombre + '\'' +
                 ", empresaNIT='" + empresaNIT + '\'' +
