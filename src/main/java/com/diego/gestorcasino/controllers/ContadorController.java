@@ -6,7 +6,9 @@ import com.diego.gestorcasino.services.ContadorService;
 import com.diego.gestorcasino.services.UsuarioRolTransaccionalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import com.diego.gestorcasino.dto.ContadorResponseDTO;
 
 import java.util.List;
 
@@ -50,8 +52,23 @@ public class ContadorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Contador>> listarTodos() {
-        return ResponseEntity.ok(contadorService.listarTodos());
+    public ResponseEntity<List<ContadorResponseDTO>> listarTodos() {
+        System.out.println("=== ENTRANDO A LISTAR CONTADORES ===");
+        System.out.println("Usuario autenticado: " + SecurityContextHolder.getContext().getAuthentication().getName());
+        System.out.println("Autoridades: " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+
+        List<Contador> contadores = contadorService.listarTodos();
+        List<ContadorResponseDTO> response = contadores.stream()
+            .map(c -> new ContadorResponseDTO(
+                c.getCedula(),
+                c.getNombre(),
+                c.getTelefono(),
+                c.getUsuario() != null ? c.getUsuario().getEmail() : null
+            ))
+            .toList();
+
+        System.out.println("Cantidad encontrada: " + response.size());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{cedula}")
@@ -61,4 +78,3 @@ public class ContadorController {
                 .orElseThrow(() -> new RuntimeException("Contador no encontrado con cédula: " + cedula));
     }
 }
-

@@ -1,11 +1,13 @@
 package com.diego.gestorcasino.controllers;
 
+import com.diego.gestorcasino.dto.CajeroResponseDTO;
 import com.diego.gestorcasino.dto.RegistroUsuarioRequest;
 import com.diego.gestorcasino.models.Cajero;
 import com.diego.gestorcasino.services.CajeroService;
 import com.diego.gestorcasino.services.UsuarioRolTransaccionalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,8 +52,23 @@ public class CajeroController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Cajero>> listarTodos() {
-        return ResponseEntity.ok(cajeroService.listarTodos());
+    public ResponseEntity<List<CajeroResponseDTO>> listarTodos() {
+        System.out.println("=== ENTRANDO A LISTAR CAJEROS ===");
+        System.out.println("Usuario autenticado: " + SecurityContextHolder.getContext().getAuthentication().getName());
+        System.out.println("Autoridades: " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+
+        List<Cajero> cajeros = cajeroService.listarTodos();
+        List<CajeroResponseDTO> response = cajeros.stream()
+                .map(c -> new CajeroResponseDTO(
+                    c.getCedula(),
+                    c.getNombre(),
+                    c.getTelefono(),
+                    c.getUsuario() != null ? c.getUsuario().getEmail() : null
+                ))
+                .toList();
+
+        System.out.println("Cantidad encontrada: " + response.size());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{cedula}")
@@ -61,4 +78,3 @@ public class CajeroController {
                 .orElseThrow(() -> new RuntimeException("Cajero no encontrado con cédula: " + cedula));
     }
 }
-

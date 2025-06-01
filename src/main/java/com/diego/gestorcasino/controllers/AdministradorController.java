@@ -1,10 +1,12 @@
 package com.diego.gestorcasino.controllers;
 
+import com.diego.gestorcasino.dto.AdministradorResponseDTO;
 import com.diego.gestorcasino.dto.RegistroUsuarioRequest;
 import com.diego.gestorcasino.models.Administrador;
 import com.diego.gestorcasino.services.AdministradorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.diego.gestorcasino.services.UsuarioRolTransaccionalService;
 
@@ -50,8 +52,23 @@ public class AdministradorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Administrador>> listarTodos() {
-        return ResponseEntity.ok(administradorService.listarTodos());
+    public ResponseEntity<List<AdministradorResponseDTO>> listarTodos() {
+        System.out.println("=== ENTRANDO A LISTAR ADMINISTRADORES ===");
+        System.out.println("Usuario autenticado: " + SecurityContextHolder.getContext().getAuthentication().getName());
+        System.out.println("Autoridades: " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+
+        List<Administrador> administradores = administradorService.listarTodos();
+        List<AdministradorResponseDTO> response = administradores.stream()
+                .map(c -> new AdministradorResponseDTO(
+                        c.getCedula(),
+                        c.getNombre(),
+                        c.getTelefono(),
+                        c.getUsuario() != null ? c.getUsuario().getEmail() : null
+                ))
+                .toList();
+
+        System.out.println("Cantidad encontrada: " + response.size());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{cedula}")

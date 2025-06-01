@@ -73,7 +73,7 @@ public class SecurityConfig {
                     // Endpoints públicos
                     .requestMatchers("/public/**").permitAll()
                     
-                    // Todo lo demás requiere autenticación
+                    //Todo lo demás requiere autenticación
                     .anyRequest().authenticated();
             })
             .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
