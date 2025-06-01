@@ -1,5 +1,6 @@
 package com.diego.gestorcasino.controllers;
 
+import com.diego.gestorcasino.dto.ContadorResponseDTO;
 import com.diego.gestorcasino.dto.RegistroUsuarioRequest;
 import com.diego.gestorcasino.models.Contador;
 import com.diego.gestorcasino.services.ContadorService;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import com.diego.gestorcasino.dto.ContadorResponseDTO;
 
 import java.util.List;
 
@@ -19,20 +19,19 @@ public class ContadorController {
     @Autowired
     private ContadorService contadorService;
 
-    //Borrar de ser necesario
+    @Autowired
+    private UsuarioRolTransaccionalService usuarioRolTransaccionalService;
+
     @PostMapping
     public ResponseEntity<Contador> registrar(@RequestBody Contador contador) {
         Contador nuevo = contadorService.guardar(contador);
         return ResponseEntity.ok(nuevo);
     }
 
-    @Autowired
-    private UsuarioRolTransaccionalService usuarioRolTransaccionalService; // Cambio aquí
-
     @PostMapping("/registrar")
     public ResponseEntity<String> registrar(@RequestBody RegistroUsuarioRequest request) {
         try {
-            usuarioRolTransaccionalService.registrarUsuarioCompleto(request); // Usar inyección
+            usuarioRolTransaccionalService.registrarUsuarioCompleto(request);
             return ResponseEntity.ok("Usuario registrado exitosamente.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
@@ -45,12 +44,18 @@ public class ContadorController {
         return ResponseEntity.ok(actualizado);
     }
 
+    // USAR SOFT DELETE
     @DeleteMapping("/{cedula}")
-    public ResponseEntity<Void> eliminar(@PathVariable String cedula) {
-        contadorService.eliminar(cedula);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> eliminar(@PathVariable String cedula) {
+        try {
+            contadorService.eliminar(cedula);
+            return ResponseEntity.ok("Contador eliminado exitosamente (soft delete)");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
     }
 
+    // SOLO CONTADORES ACTIVOS
     @GetMapping
     public ResponseEntity<List<ContadorResponseDTO>> listarTodos() {
         System.out.println("=== ENTRANDO A LISTAR CONTADORES ===");
@@ -75,6 +80,6 @@ public class ContadorController {
     public ResponseEntity<Contador> obtener(@PathVariable String cedula) {
         return contadorService.buscarPorCedula(cedula)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new RuntimeException("Contador no encontrado con cédula: " + cedula));
+                .orElseThrow(() -> new RuntimeException("Contador activo no encontrado con cédula: " + cedula));
     }
 }

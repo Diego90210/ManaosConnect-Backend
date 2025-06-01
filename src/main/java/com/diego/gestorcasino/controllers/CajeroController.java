@@ -22,7 +22,6 @@ public class CajeroController {
     @Autowired
     private UsuarioRolTransaccionalService usuarioRolTransaccionalService;
 
-    //Borrar de ser necesario
     @PostMapping
     public ResponseEntity<Cajero> registrar(@RequestBody Cajero cajero) {
         Cajero nuevo = cajeroService.guardar(cajero);
@@ -32,7 +31,7 @@ public class CajeroController {
     @PostMapping("/registrar")
     public ResponseEntity<String> registrar(@RequestBody RegistroUsuarioRequest request) {
         try {
-            usuarioRolTransaccionalService.registrarUsuarioCompleto(request); // Usar inyección
+            usuarioRolTransaccionalService.registrarUsuarioCompleto(request);
             return ResponseEntity.ok("Usuario registrado exitosamente.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
@@ -45,12 +44,18 @@ public class CajeroController {
         return ResponseEntity.ok(actualizado);
     }
 
+    // USAR SOFT DELETE
     @DeleteMapping("/{cedula}")
-    public ResponseEntity<Void> eliminar(@PathVariable String cedula) {
-        cajeroService.eliminar(cedula);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> eliminar(@PathVariable String cedula) {
+        try {
+            cajeroService.eliminar(cedula);
+            return ResponseEntity.ok("Cajero eliminado exitosamente (soft delete)");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
     }
 
+    // SOLO CAJEROS ACTIVOS
     @GetMapping
     public ResponseEntity<List<CajeroResponseDTO>> listarTodos() {
         System.out.println("=== ENTRANDO A LISTAR CAJEROS ===");
@@ -75,6 +80,6 @@ public class CajeroController {
     public ResponseEntity<Cajero> obtener(@PathVariable String cedula) {
         return cajeroService.buscarPorCedula(cedula)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new RuntimeException("Cajero no encontrado con cédula: " + cedula));
+                .orElseThrow(() -> new RuntimeException("Cajero activo no encontrado con cédula: " + cedula));
     }
 }

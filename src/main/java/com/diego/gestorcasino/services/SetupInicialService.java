@@ -31,8 +31,9 @@ public class SetupInicialService {
         return adminSetupEnabled && !existeAdministrador();
     }
 
+    // SOLO CONTAR ADMINISTRADORES ACTIVOS
     public boolean existeAdministrador() {
-        return usuarioRepository.countByRol(Rol.ADMIN) > 0;
+        return usuarioRepository.countActiveByRol(Rol.ADMIN) > 0;
     }
 
     @Transactional
@@ -42,7 +43,7 @@ public class SetupInicialService {
         }
 
         if (existeAdministrador()) {
-            throw new RuntimeException("Ya existe un administrador en el sistema");
+            throw new RuntimeException("Ya existe un administrador activo en el sistema");
         }
 
         // Forzar rol ADMIN

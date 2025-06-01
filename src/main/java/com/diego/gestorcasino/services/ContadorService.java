@@ -20,6 +20,9 @@ public class ContadorService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
     public Contador guardar(Contador contador) {
         String cedula = contador.getCedula();
 
@@ -27,14 +30,18 @@ public class ContadorService {
             throw new RuntimeException("Ya existe un contador con cédula: " + cedula);
         }
 
-        if (!usuarioRepository.existsById(cedula)) {
-            throw new RuntimeException("Primero debes registrar el usuario con cédula: " + cedula);
-        }
+        //VERIFICAR QUE EL USUARIO ESTÉ ACTIVO
+        Usuario usuario = usuarioRepository.findActiveByCedula(cedula)
+                .orElseThrow(() -> new RuntimeException("Usuario activo no encontrado con cédula: " + cedula));
 
         return contadorRepository.save(contador);
     }
 
     public Contador actualizar(String cedula, Contador actualizado) {
+        // VERIFICAR QUE EL USUARIO ESTÉ ACTIVO
+        usuarioRepository.findActiveByCedula(cedula)
+                .orElseThrow(() -> new RuntimeException("Usuario activo no encontrado con cédula: " + cedula));
+
         Contador contador = contadorRepository.findById(cedula)
                 .orElseThrow(() -> new RuntimeException("Contador no encontrado con cédula: " + cedula));
 
@@ -44,19 +51,25 @@ public class ContadorService {
         return contadorRepository.save(contador);
     }
 
+    // USAR SOFT DELETE DEL USUARIO
     public void eliminar(String cedula) {
         if (!contadorRepository.existsById(cedula)) {
             throw new RuntimeException("Contador no encontrado con cédula: " + cedula);
         }
-        contadorRepository.deleteById(cedula);
+        // Usar soft delete del usuario en lugar de eliminar el contador
+        usuarioService.eliminar(cedula);
     }
 
+    // FILTRAR SOLO CONTADORES CON USUARIOS ACTIVOS
     public List<Contador> listarTodos() {
-        return contadorRepository.findAll();
+        return contadorRepository.findAll().stream()
+                .filter(contador -> contador.getUsuario() != null && contador.getUsuario().getActivo())
+                .toList();
     }
 
     public Optional<Contador> buscarPorCedula(String cedula) {
-        return contadorRepository.findById(cedula);
+        return contadorRepository.findById(cedula)
+                .filter(contador -> contador.getUsuario() != null && contador.getUsuario().getActivo());
     }
 
     public void guardarDesdeRegistro(RegistroUsuarioRequest request, Usuario usuario) {
@@ -72,6 +85,4 @@ public class ContadorService {
 
         contadorRepository.save(contador);
     }
-
 }
-

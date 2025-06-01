@@ -3,6 +3,7 @@ package com.diego.gestorcasino.controllers;
 import com.diego.gestorcasino.models.Usuario;
 import com.diego.gestorcasino.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +26,13 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{cedula}")
-    public void eliminar(@PathVariable String cedula) {
-        usuarioService.eliminar(cedula);
+    public ResponseEntity<String> eliminar(@PathVariable String cedula) {
+        try {
+            usuarioService.eliminar(cedula);
+            return ResponseEntity.ok("Usuario eliminado exitosamente (soft delete)");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
     }
 
     @GetMapping
@@ -37,6 +43,27 @@ public class UsuarioController {
     @GetMapping("/{cedula}")
     public Usuario obtener(@PathVariable String cedula) {
         return usuarioService.buscarPorCedula(cedula)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con cédula: " + cedula));
+                .orElseThrow(() -> new RuntimeException("Usuario activo no encontrado con cédula: " + cedula));
+    }
+
+    // NUEVOS ENDPOINTS PARA GESTIÓN DE ELIMINADOS
+    @GetMapping("/eliminados")
+    public List<Usuario> listarEliminados() {
+        return usuarioService.listarEliminados();
+    }
+
+    @GetMapping("/todos")
+    public List<Usuario> listarTodosInclurandoEliminados() {
+        return usuarioService.listarTodosIncluyendoEliminados();
+    }
+
+    @PutMapping("/{cedula}/reactivar")
+    public ResponseEntity<String> reactivar(@PathVariable String cedula) {
+        try {
+            usuarioService.reactivarUsuario(cedula);
+            return ResponseEntity.ok("Usuario reactivado exitosamente");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
     }
 }

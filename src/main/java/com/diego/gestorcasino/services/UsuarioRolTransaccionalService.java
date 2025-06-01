@@ -4,9 +4,12 @@ import com.diego.gestorcasino.dto.RegistroUsuarioRequest;
 import com.diego.gestorcasino.models.*;
 import com.diego.gestorcasino.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 public class UsuarioRolTransaccionalService {
@@ -48,18 +51,25 @@ public class UsuarioRolTransaccionalService {
         }
     }
 
+    // ⭐ ACTUALIZADO PARA SOFT DELETE
     @Transactional
     public void eliminarUsuarioCompleto(String cedula) {
         try {
             // Buscar el usuario
-            Usuario usuario = usuarioRepository.findById(cedula)
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado con cédula: " + cedula));
+            Usuario usuario = usuarioRepository.findActiveByCedula(cedula)
+                    .orElseThrow(() -> new RuntimeException("Usuario activo no encontrado con cédula: " + cedula));
 
-            // Eliminar la entidad de rol primero (por las relaciones)
-            eliminarEntidadRol(usuario);
-
-            // Eliminar el usuario
-            usuarioRepository.delete(usuario);
+            // Soft delete del usuario
+            usuario.setActivo(false);
+            usuario.setFechaEliminacion(LocalDateTime.now());
+            
+            String eliminadoPor = SecurityContextHolder.getContext()
+                    .getAuthentication().getName();
+            usuario.setEliminadoPor(eliminadoPor);
+            
+            usuarioRepository.save(usuario);
+            
+            // Nota: Las entidades de rol mantienen la referencia, pero el usuario está marcado como inactivo
             
         } catch (Exception e) {
             throw new RuntimeException("Error al eliminar usuario completo: " + e.getMessage(), e);
@@ -85,13 +95,14 @@ public class UsuarioRolTransaccionalService {
         }
     }
 
+    // ⭐ ACTUALIZADO PARA VALIDAR SOLO USUARIOS ACTIVOS
     private void validarDisponibilidad(RegistroUsuarioRequest request) {
         if (usuarioRepository.existsById(request.getCedula())) {
             throw new RuntimeException("Ya existe un usuario con la cédula: " + request.getCedula());
         }
         
-        if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Ya existe un usuario con el email: " + request.getEmail());
+        if (usuarioRepository.findActiveByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Ya existe un usuario activo con el email: " + request.getEmail());
         }
     }
 
@@ -101,6 +112,7 @@ public class UsuarioRolTransaccionalService {
         usuario.setEmail(request.getEmail());
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         usuario.setRol(request.getRol());
+        usuario.setActivo(true); // ⭐ NUEVO USUARIO SIEMPRE ACTIVO
         return usuario;
     }
 
@@ -114,45 +126,23 @@ public class UsuarioRolTransaccionalService {
     }
 
     private void crearAdministrador(RegistroUsuarioRequest request, Usuario usuario) {
-        Administrador admin = new Administrador(usuario); // Usar constructor
+        Administrador admin = new Administrador(usuario);
         admin.setNombre(request.getNombre());
         admin.setTelefono(request.getTelefono());
         administradorRepository.save(admin);
     }
 
     private void crearCajero(RegistroUsuarioRequest request, Usuario usuario) {
-        Cajero cajero = new Cajero(usuario); // Usar constructor
+        Cajero cajero = new Cajero(usuario);
         cajero.setNombre(request.getNombre());
         cajero.setTelefono(request.getTelefono());
         cajeroRepository.save(cajero);
     }
 
     private void crearContador(RegistroUsuarioRequest request, Usuario usuario) {
-        Contador contador = new Contador(usuario); // Usar constructor
+        Contador contador = new Contador(usuario);
         contador.setNombre(request.getNombre());
         contador.setTelefono(request.getTelefono());
         contadorRepository.save(contador);
-    }
-
-    private void eliminarEntidadRol(Usuario usuario) {
-        String cedula = usuario.getCedula();
-        
-        switch (usuario.getRol()) {
-            case ADMIN -> {
-                if (administradorRepository.existsById(cedula)) {
-                    administradorRepository.deleteById(cedula);
-                }
-            }
-            case CAJERO -> {
-                if (cajeroRepository.existsById(cedula)) {
-                    cajeroRepository.deleteById(cedula);
-                }
-            }
-            case CONTADOR -> {
-                if (contadorRepository.existsById(cedula)) {
-                    contadorRepository.deleteById(cedula);
-                }
-            }
-        }
     }
 }

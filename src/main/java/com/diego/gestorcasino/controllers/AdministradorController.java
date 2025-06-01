@@ -22,17 +22,10 @@ public class AdministradorController {
     @Autowired
     private UsuarioRolTransaccionalService usuarioRolTransaccionalService;
 
-    //Borrar de ser necesario
-    @PostMapping
-    public ResponseEntity<Administrador> registrar(@RequestBody Administrador administrador) {
-        Administrador nuevo = administradorService.guardar(administrador);
-        return ResponseEntity.ok(nuevo);
-    }
-
     @PostMapping("/registrar")
     public ResponseEntity<String> registrar(@RequestBody RegistroUsuarioRequest request) {
         try {
-            usuarioRolTransaccionalService.registrarUsuarioCompleto(request); // Usar inyección
+            usuarioRolTransaccionalService.registrarUsuarioCompleto(request);
             return ResponseEntity.ok("Usuario registrado exitosamente.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
@@ -45,12 +38,18 @@ public class AdministradorController {
         return ResponseEntity.ok(actualizado);
     }
 
+    //USAR SOFT DELETE
     @DeleteMapping("/{cedula}")
-    public ResponseEntity<Void> eliminar(@PathVariable String cedula) {
-        administradorService.eliminar(cedula);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> eliminar(@PathVariable String cedula) {
+        try {
+            administradorService.eliminar(cedula);
+            return ResponseEntity.ok("Administrador eliminado exitosamente (soft delete)");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
     }
 
+    // SOLO ADMINISTRADORES ACTIVOS
     @GetMapping
     public ResponseEntity<List<AdministradorResponseDTO>> listarTodos() {
         System.out.println("=== ENTRANDO A LISTAR ADMINISTRADORES ===");
@@ -75,6 +74,6 @@ public class AdministradorController {
     public ResponseEntity<Administrador> obtener(@PathVariable String cedula) {
         return administradorService.buscarPorCedula(cedula)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new RuntimeException("Administrador no encontrado con cédula: " + cedula));
+                .orElseThrow(() -> new RuntimeException("Administrador activo no encontrado con cédula: " + cedula));
     }
 }

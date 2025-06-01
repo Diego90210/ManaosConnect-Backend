@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.time.LocalDateTime;
 
 @Entity
 public class Usuario implements UserDetails {
@@ -24,18 +25,21 @@ public class Usuario implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Rol rol;
 
+    @Column(nullable = false)
+    private Boolean activo = true;
 
+    @Column
+    private LocalDateTime fechaEliminacion;
 
-    // Getters y setters
+    @Column
+    private String eliminadoPor;
 
+    // Constructores
+    public Usuario() {}
 
-    public String getCedula() {
-        return cedula;
-    }
-
-    public void setCedula(String cedula) {
-        this.cedula = cedula;
-    }
+    // Getters y setters existentes
+    public String getCedula() { return cedula; }
+    public void setCedula(String cedula) { this.cedula = cedula; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -46,6 +50,15 @@ public class Usuario implements UserDetails {
     public Rol getRol() { return rol; }
     public void setRol(Rol rol) { this.rol = rol; }
 
+    public Boolean getActivo() { return activo; }
+    public void setActivo(Boolean activo) { this.activo = activo; }
+
+    public LocalDateTime getFechaEliminacion() { return fechaEliminacion; }
+    public void setFechaEliminacion(LocalDateTime fechaEliminacion) { this.fechaEliminacion = fechaEliminacion; }
+
+    public String getEliminadoPor() { return eliminadoPor; }
+    public void setEliminadoPor(String eliminadoPor) { this.eliminadoPor = eliminadoPor; }
+
     // Implementación de UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -53,9 +66,7 @@ public class Usuario implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return cedula;
-    }
+    public String getUsername() { return cedula; }
 
     @Override
     public boolean isAccountNonExpired() { return true; }
@@ -67,6 +78,7 @@ public class Usuario implements UserDetails {
     public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() { return true; }
-
+    public boolean isEnabled() { 
+        return activo != null ? activo : true; 
+    }
 }
