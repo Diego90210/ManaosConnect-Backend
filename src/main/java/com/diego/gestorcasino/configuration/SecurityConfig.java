@@ -55,25 +55,46 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> {
-                // Endpoints públicos para setup inicial
+                // ENDPOINTS PÚBLICOS
                 if (adminSetupEnabled) {
                     auth.requestMatchers("/api/setup/**").permitAll();
                 }
-                
-                // Endpoints de autenticación
                 auth.requestMatchers("/auth/**").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
-                    
-                    // Endpoints de registro - solo admin puede crear usuarios
-                    .requestMatchers("/api/usuarios/registrar").hasRole("ADMIN")
-                    .requestMatchers("/admin/**").hasRole("ADMIN")
-                    .requestMatchers("/cajero/**").hasAnyRole("ADMIN", "CAJERO")
-                    .requestMatchers("/contador/**").hasAnyRole("ADMIN", "CONTADOR")
-                    
-                    // Endpoints públicos
                     .requestMatchers("/public/**").permitAll()
                     
-                    //Todo lo demás requiere autenticación
+                    // GESTIÓN DE USUARIOS - SOLO ADMIN
+                    .requestMatchers("/admin/usuarios/**").hasRole("ADMIN")
+                    .requestMatchers("/admin/administradores/**").hasRole("ADMIN")
+                    .requestMatchers("/admin/cajeros/**").hasRole("ADMIN")  // Admin gestiona cajeros
+                    .requestMatchers("/admin/contadores/**").hasRole("ADMIN")  // Admin gestiona contadores
+                    
+                    // GESTIÓN DE EMPRESAS Y CONSUMIDORES - SOLO ADMIN
+                    .requestMatchers("/admin/empresas/**").hasRole("ADMIN")
+                    .requestMatchers("/admin/consumidores/**").hasRole("ADMIN")
+                    
+                    // GESTIÓN DE PLATOS - SOLO ADMIN (con lectura para cajeros)
+                    .requestMatchers("/admin/platos/**").hasRole("ADMIN")
+                    .requestMatchers("/cajero/platos").hasAnyRole("ADMIN", "CAJERO")  // Solo lectura para cajeros
+                    .requestMatchers("/cajero/platos/{id}").hasAnyRole("ADMIN", "CAJERO")  // Solo lectura para cajeros
+                    
+                    // GESTIÓN DE CONSUMOS - SOLO CAJERO (con lectura para admin y contador)
+                    .requestMatchers("/cajero/consumos/**").hasAnyRole("ADMIN", "CAJERO")
+                    .requestMatchers("/admin/consumos").hasRole("ADMIN")  // Admin puede ver todos
+                    .requestMatchers("/admin/consumos/{id}").hasRole("ADMIN")  // Admin puede ver específicos
+                    .requestMatchers("/contador/consumos").hasRole("CONTADOR")  // Contador puede ver para reportes
+                    
+                    // GESTIÓN DE REPORTES - SOLO CONTADOR (con lectura para admin)
+                    .requestMatchers("/contador/reportes/**").hasAnyRole("ADMIN", "CONTADOR")
+                    .requestMatchers("/admin/reportes").hasRole("ADMIN")  // Admin puede ver reportes
+                    .requestMatchers("/admin/reportes/{id}").hasRole("ADMIN")  // Admin puede ver reportes específicos
+                    
+                    // ENDPOINTS DE CONSULTA PARA OPERACIONES TRANSVERSALES
+                    .requestMatchers("/cajero/empresas").hasAnyRole("ADMIN", "CAJERO")  // Cajero necesita ver empresas para registrar consumos
+                    .requestMatchers("/cajero/consumidores").hasAnyRole("ADMIN", "CAJERO")  // Cajero necesita ver consumidores
+                    .requestMatchers("/contador/empresas").hasAnyRole("ADMIN", "CONTADOR")  // Contador necesita ver empresas para reportes
+                    
+                    // Todo lo demás requiere autenticación
                     .anyRequest().authenticated();
             })
             .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))

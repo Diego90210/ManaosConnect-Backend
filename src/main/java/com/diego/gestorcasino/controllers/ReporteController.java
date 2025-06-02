@@ -1,58 +1,40 @@
 package com.diego.gestorcasino.controllers;
 
-import com.diego.gestorcasino.models.Reporte;
 import com.diego.gestorcasino.dto.ReporteRequestDTO;
+import com.diego.gestorcasino.dto.ReporteResponseDTO;
+import com.diego.gestorcasino.models.Reporte;
 import com.diego.gestorcasino.services.ReporteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/reportes")
+@RequestMapping("/api/reportes")  // ⭐ Cambiar a API genérica
 public class ReporteController {
 
     @Autowired
     private ReporteService reporteService;
 
-    // Obtener todos los reportes
+    // ⭐ ENDPOINTS SOLO PARA USO INTERNO O API EXTERNA
     @GetMapping
     public List<Reporte> obtenerTodosLosReportes() {
-        return reporteService.obtenerTodosLosReportes();
+        return reporteService.listarTodos();
     }
 
-    // Obtener reportes por empresa (por NIT)
     @GetMapping("/empresa/{nit}")
-    public List<Reporte> obtenerReportesPorEmpresa(@PathVariable String nit) {
-        return reporteService.obtenerReportesPorEmpresa(nit);
+    public List<ReporteResponseDTO> obtenerReportesPorEmpresa(@PathVariable String nit) {
+        return reporteService.listarPorEmpresaDTO(nit); // ✅ Funcionará correctamente
     }
 
-    // Obtener un reporte por su ID
     @GetMapping("/{id}")
     public ResponseEntity<Reporte> obtenerReportePorId(@PathVariable int id) {
-        Reporte reporte = reporteService.obtenerReportePorId(id);
-        return ResponseEntity.ok(reporte);
+        return reporteService.buscarPorId(id)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new RuntimeException("Reporte no encontrado con ID: " + id));
     }
 
-    // Crear un nuevo reporte
-    @PostMapping
-    public ResponseEntity<Reporte> crearReporte(@RequestBody ReporteRequestDTO requestDTO) {
-        Reporte nuevoReporte = reporteService.crearReporte(
-                requestDTO.getNitEmpresa(),
-                requestDTO.getFechaInicio(),
-                requestDTO.getFechaFin()
-        );
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoReporte);
-    }
-
-    // Eliminar un reporte
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarReporte(@PathVariable int id) {
-        reporteService.eliminarReporte(id);
-        return ResponseEntity.noContent().build();
-    }
+    //Los endpoints de creación y eliminación están en ContadorReportesController
+    // Este controller se mantiene para compatibilidad con APIs externas
 }
-
-
