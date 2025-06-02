@@ -34,6 +34,10 @@ public class ReporteService {
     @Autowired
     private ConsumidorRepository consumidorRepository;
 
+    @Autowired
+    private PdfGeneratorService pdfGeneratorService;
+
+
     // MÉTODOS ESTANDARIZADOS (nombres consistentes)
     public Reporte crear(ReporteRequestDTO requestDTO) {
         return crearReporte(requestDTO.getNitEmpresa(), requestDTO.getFechaInicio(), requestDTO.getFechaFin());
@@ -265,4 +269,9 @@ private List<EmpleadoReporteDTO> obtenerEmpleadosConConsumos(String nitEmpresa, 
             .sorted((e1, e2) -> Double.compare(e2.getTotalConsumido(), e1.getTotalConsumido())) // Ordenar por total descendente
             .collect(Collectors.toList());
 }
+    public byte[] generarReportePdf(int reporteId) {
+        ReporteResponseDTO reporte = obtenerPorIdDTO(reporteId);
+        return pdfGeneratorService.generarReportePdf(reporte);
+    }
+
 }
