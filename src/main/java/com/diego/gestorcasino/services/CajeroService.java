@@ -51,7 +51,7 @@ public class CajeroService {
         return cajeroRepository.save(cajero);
     }
 
-    // ⭐ USAR SOFT DELETE DEL USUARIO
+    //  USAR SOFT DELETE DEL USUARIO
     public void eliminar(String cedula) {
         if (!cajeroRepository.existsById(cedula)) {
             throw new RuntimeException("Cajero no encontrado con cédula: " + cedula);

@@ -24,7 +24,7 @@ public class CajeroOperacionesController {
     @Autowired
     private ConsumidorService consumidorService;
 
-    // ⭐ GESTIÓN DE CONSUMOS (Cajero puede hacer todo)
+    //  GESTIÓN DE CONSUMOS (Cajero puede hacer todo)
     @PostMapping("/consumos")
     public ResponseEntity<Consumo> registrarConsumo(@RequestBody Consumo consumo) {
         try {
@@ -68,7 +68,7 @@ public class CajeroOperacionesController {
                 .orElseThrow(() -> new RuntimeException("Consumo no encontrado"));
     }
 
-    // ⭐ CONSULTA DE DATOS NECESARIOS PARA OPERACIONES (Solo lectura)
+    //  CONSULTA DE DATOS NECESARIOS PARA OPERACIONES (Solo lectura)
     @GetMapping("/platos")
     public ResponseEntity<List<Plato>> listarPlatosDisponibles() {
         return ResponseEntity.ok(platoService.listarTodos());
@@ -105,7 +105,7 @@ public class CajeroOperacionesController {
                 .orElseThrow(() -> new RuntimeException("Consumidor no encontrado"));
     }
 
-    // ⭐ ENDPOINT ESPECÍFICO PARA EL FLUJO DE REGISTRO DE CONSUMO
+    //  ENDPOINT ESPECÍFICO PARA EL FLUJO DE REGISTRO DE CONSUMO
     @GetMapping("/consumidores/empresa/{nit}")
     public ResponseEntity<List<Consumidor>> listarConsumidoresPorEmpresa(@PathVariable String nit) {
         return ResponseEntity.ok(consumidorService.listarPorEmpresa(nit));

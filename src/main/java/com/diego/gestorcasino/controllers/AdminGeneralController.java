@@ -33,7 +33,7 @@ public class AdminGeneralController {
     @Autowired
     private ReporteService reporteService;
 
-    // ⭐ GESTIÓN DE USUARIOS (Solo Admin)
+    //  GESTIÓN DE USUARIOS (Solo Admin)
     @PostMapping("/usuarios/registrar")
     public ResponseEntity<String> registrarUsuario(@RequestBody RegistroUsuarioRequest request) {
         try {
@@ -54,7 +54,7 @@ public class AdminGeneralController {
         }
     }
 
-    // ⭐ GESTIÓN DE EMPRESAS (Solo Admin)
+    //  GESTIÓN DE EMPRESAS (Solo Admin)
     @PostMapping("/empresas")
     public ResponseEntity<EmpresaCliente> crearEmpresa(@RequestBody EmpresaCliente empresa) {
         return ResponseEntity.ok(empresaService.guardar(empresa));
@@ -80,7 +80,7 @@ public class AdminGeneralController {
         return ResponseEntity.ok(empresaService.listarTodas());
     }
 
-    // ⭐ GESTIÓN DE CONSUMIDORES (Solo Admin)
+    //  GESTIÓN DE CONSUMIDORES (Solo Admin)
     @PostMapping("/consumidores")
     public ResponseEntity<Consumidor> crearConsumidor(@RequestBody Consumidor consumidor) {
         return ResponseEntity.ok(consumidorService.guardar(consumidor));
@@ -106,7 +106,7 @@ public class AdminGeneralController {
         return ResponseEntity.ok(consumidorService.listarTodos());
     }
 
-    // ⭐ GESTIÓN DE PLATOS (Solo Admin)
+    //  GESTIÓN DE PLATOS (Solo Admin)
     @PostMapping("/platos")
     public ResponseEntity<Plato> crearPlato(@RequestBody Plato plato) {
         return ResponseEntity.ok(platoService.guardar(plato));
@@ -132,7 +132,7 @@ public class AdminGeneralController {
         return ResponseEntity.ok(platoService.listarTodos());
     }
 
-    // ⭐ CONSULTA DE CONSUMOS (Solo lectura para Admin)
+    //  CONSULTA DE CONSUMOS (Solo lectura para Admin)
     @GetMapping("/consumos")
     public ResponseEntity<List<ConsumoDTO>> listarTodosConsumos() {
         return ResponseEntity.ok(consumoService.obtenerTodosLosConsumos()); // ✅ Ya usa DTOs
@@ -144,15 +144,15 @@ public class AdminGeneralController {
         return ResponseEntity.ok(consumo);
     }
 
-    // ⭐ CONSULTA DE REPORTES (Solo lectura para Admin) - USAR DTOs
+    //  CONSULTA DE REPORTES (Solo lectura para Admin) - USAR DTOs
     @GetMapping("/reportes")
     public ResponseEntity<List<ReporteResponseDTO>> listarTodosReportes() {
-        return ResponseEntity.ok(reporteService.listarTodosDTO()); // ⭐ CAMBIO A DTO
+        return ResponseEntity.ok(reporteService.listarTodosDTO()); //  CAMBIO A DTO
     }
 
     @GetMapping("/reportes/{id}")
     public ResponseEntity<ReporteResponseDTO> obtenerReporte(@PathVariable int id) {
-        ReporteResponseDTO reporte = reporteService.obtenerPorIdDTO(id); // ⭐ CAMBIO A DTO
+        ReporteResponseDTO reporte = reporteService.obtenerPorIdDTO(id); //  CAMBIO A DTO
         return ResponseEntity.ok(reporte);
     }
 }

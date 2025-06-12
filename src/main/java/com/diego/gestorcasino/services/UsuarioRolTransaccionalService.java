@@ -51,7 +51,7 @@ public class UsuarioRolTransaccionalService {
         }
     }
 
-    // ⭐ ACTUALIZADO PARA SOFT DELETE
+    // ACTUALIZADO PARA SOFT DELETE
     @Transactional
     public void eliminarUsuarioCompleto(String cedula) {
         try {
@@ -95,7 +95,7 @@ public class UsuarioRolTransaccionalService {
         }
     }
 
-    // ⭐ ACTUALIZADO PARA VALIDAR SOLO USUARIOS ACTIVOS
+    //  ACTUALIZADO PARA VALIDAR SOLO USUARIOS ACTIVOS
     private void validarDisponibilidad(RegistroUsuarioRequest request) {
         if (usuarioRepository.existsById(request.getCedula())) {
             throw new RuntimeException("Ya existe un usuario con la cédula: " + request.getCedula());
@@ -112,7 +112,7 @@ public class UsuarioRolTransaccionalService {
         usuario.setEmail(request.getEmail());
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         usuario.setRol(request.getRol());
-        usuario.setActivo(true); // ⭐ NUEVO USUARIO SIEMPRE ACTIVO
+        usuario.setActivo(true); //  NUEVO USUARIO SIEMPRE ACTIVO
         return usuario;
     }
 

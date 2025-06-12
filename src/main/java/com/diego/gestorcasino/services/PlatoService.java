@@ -32,7 +32,7 @@ public class PlatoService {
         Plato platoExistente = platoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plato no encontrado con ID: " + id));
 
-        // ⭐ SOLUCIÓN: Usar == para comparar primitivos int
+        //  SOLUCIÓN: Usar == para comparar primitivos int
         Optional<Plato> platoConMismoNombre = platoRepository.findByNombreIgnoreCase(detallesPlato.getNombre());
         if (platoConMismoNombre.isPresent() && platoConMismoNombre.get().getId() != id) {
             throw new RuntimeException("Ya existe otro plato con el nombre: " + detallesPlato.getNombre());
@@ -83,7 +83,7 @@ public class PlatoService {
                 .orElseThrow(() -> new RuntimeException("Plato no encontrado con nombre: " + nombre));
     }
 
-    // ⭐ MÉTODOS EXISTENTES PARA MANTENER COMPATIBILIDAD
+    //  MÉTODOS EXISTENTES PARA MANTENER COMPATIBILIDAD
     public List<Plato> obtenerTodosLosPlatos() {
         return listarTodos();
     }
