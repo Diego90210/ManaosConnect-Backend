@@ -54,6 +54,17 @@ public class AdminGeneralController {
         }
     }
 
+    @PutMapping("/usuarios/reactivar/{cedula}")
+    public ResponseEntity<String> reactivarUsuario(@PathVariable String cedula) {
+        try {
+            usuarioRolService.reactivarUsuario(cedula);
+            return ResponseEntity.ok("Usuario reactivado exitosamente");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+
     //  GESTIÓN DE EMPRESAS (Solo Admin)
     @PostMapping("/empresas")
     public ResponseEntity<EmpresaCliente> crearEmpresa(@RequestBody EmpresaCliente empresa) {

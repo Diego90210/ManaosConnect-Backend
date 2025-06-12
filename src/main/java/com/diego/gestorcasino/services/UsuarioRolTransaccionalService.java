@@ -76,6 +76,28 @@ public class UsuarioRolTransaccionalService {
         }
     }
 
+    @Transactional
+    public void reactivarUsuario(String cedula) {
+        Usuario usuario = usuarioRepository.findById(cedula)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con cédula: " + cedula));
+
+        if (usuario.getActivo()) {
+            throw new RuntimeException("El usuario ya está activo");
+        }
+
+        // Verificar que el email no esté en uso por otro usuario activo (evitar duplicidad)
+        usuarioRepository.findActiveByEmail(usuario.getEmail()).ifPresent(u -> {
+            throw new RuntimeException("Ya existe un usuario activo con el email: " + usuario.getEmail());
+        });
+
+        usuario.setActivo(true);
+        usuario.setFechaEliminacion(null);
+        usuario.setEliminadoPor(null);
+
+        usuarioRepository.save(usuario);
+    }
+
+
     // Métodos privados de apoyo
     private void validarRequest(RegistroUsuarioRequest request) {
         if (request.getCedula() == null || request.getCedula().trim().isEmpty()) {
