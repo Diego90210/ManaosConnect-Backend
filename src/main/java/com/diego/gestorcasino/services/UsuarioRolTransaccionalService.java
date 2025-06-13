@@ -1,6 +1,7 @@
 package com.diego.gestorcasino.services;
 
 import com.diego.gestorcasino.dto.RegistroUsuarioRequest;
+import com.diego.gestorcasino.dto.UsuarioResponseDTO;
 import com.diego.gestorcasino.models.*;
 import com.diego.gestorcasino.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UsuarioRolTransaccionalService {
@@ -28,6 +31,9 @@ public class UsuarioRolTransaccionalService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @Transactional
     public Usuario registrarUsuarioCompleto(RegistroUsuarioRequest request) {
@@ -75,6 +81,37 @@ public class UsuarioRolTransaccionalService {
             throw new RuntimeException("Error al eliminar usuario completo: " + e.getMessage(), e);
         }
     }
+
+    public List<UsuarioResponseDTO> obtenerTodosUsuariosConRol() {
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        List<UsuarioResponseDTO> resultado = new ArrayList<>();
+
+        for (Usuario usuario : usuarios) {
+            if (!usuario.getActivo()) continue;
+
+            String cedula = usuario.getCedula();
+            String email = usuario.getEmail();
+            String rol = usuario.getRol().name();
+            String nombre = "";
+            String telefono = "";
+
+            switch (usuario.getRol()) {
+                case ADMIN -> administradorRepository.findByUsuario(usuario).ifPresent(admin -> {
+                    resultado.add(new UsuarioResponseDTO(cedula, admin.getNombre(), admin.getTelefono(), email, rol));
+                });
+                case CAJERO -> cajeroRepository.findByUsuario(usuario).ifPresent(cajero -> {
+                    resultado.add(new UsuarioResponseDTO(cedula, cajero.getNombre(), cajero.getTelefono(), email, rol));
+                });
+                case CONTADOR -> contadorRepository.findByUsuario(usuario).ifPresent(contador -> {
+                    resultado.add(new UsuarioResponseDTO(cedula, contador.getNombre(), contador.getTelefono(), email, rol));
+                });
+            }
+        }
+
+        return resultado;
+    }
+
+
 
     @Transactional
     public void reactivarUsuario(String cedula) {

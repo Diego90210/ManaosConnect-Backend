@@ -3,6 +3,7 @@ package com.diego.gestorcasino.controllers;
 import com.diego.gestorcasino.dto.ConsumoDTO;
 import com.diego.gestorcasino.dto.RegistroUsuarioRequest;
 import com.diego.gestorcasino.dto.ReporteResponseDTO;
+import com.diego.gestorcasino.dto.UsuarioResponseDTO;
 import com.diego.gestorcasino.models.*;
 import com.diego.gestorcasino.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ public class AdminGeneralController {
     
     @Autowired
     private ReporteService reporteService;
+    @Autowired
+    private UsuarioRolTransaccionalService usuarioRolTransaccionalService;
 
     //  GESTIÓN DE USUARIOS (Solo Admin)
     @PostMapping("/usuarios/registrar")
@@ -42,6 +45,11 @@ public class AdminGeneralController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/usuarios")
+    public List<UsuarioResponseDTO> listarUsuarios() {
+        return usuarioRolTransaccionalService.obtenerTodosUsuariosConRol();
     }
 
     @DeleteMapping("/usuarios/{cedula}")
