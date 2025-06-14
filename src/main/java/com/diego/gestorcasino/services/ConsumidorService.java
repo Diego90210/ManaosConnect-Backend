@@ -219,4 +219,20 @@ public class ConsumidorService {
         return consumidorRepository.save(consumidor);
     }
 
+    public Consumidor registrarConsumidor(String cedula, String nombre, String telefono, String empresaNIT, MultipartFile imagen) throws IOException {
+        // Validar que exista la empresa
+        if (!empresaClienteRepository.findByNit(empresaNIT).isPresent()) {
+            throw new RuntimeException("No se encontró la empresa con NIT: " + empresaNIT);
+        }
+
+        Consumidor consumidor = new Consumidor();
+        consumidor.setCedula(cedula);
+        consumidor.setNombre(nombre);
+        consumidor.setTelefono(telefono);
+        consumidor.setEmpresaNIT(empresaNIT);
+
+        return guardarConsumidorConImagen(consumidor, imagen);
+    }
+
+
 }

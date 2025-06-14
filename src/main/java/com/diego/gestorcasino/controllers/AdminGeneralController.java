@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/admin")
@@ -101,18 +103,34 @@ public class AdminGeneralController {
     }
 
     @PostMapping(value = "/consumidores", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<RegistroConsumidorResponseDTO> registrarConsumidor(
+    public ResponseEntity<?> registrarConsumidor(
             @RequestParam("cedula") String cedula,
             @RequestParam("nombre") String nombre,
             @RequestParam("telefono") String telefono,
             @RequestParam("empresaNIT") String empresaNIT,
             @RequestPart(value = "imagen", required = false) MultipartFile imagen) {
 
-        // Lógica para registrar el consumidor (posiblemente usando consumidorService)
+        try {
+            Consumidor registrado = consumidorService.registrarConsumidor(cedula, nombre, telefono, empresaNIT, imagen);
 
-        RegistroConsumidorResponseDTO response = new RegistroConsumidorResponseDTO(true, "Consumidor registrado correctamente");
-        return ResponseEntity.ok(response);
+            ConsumidorResponseDTO dto = new ConsumidorResponseDTO(
+                    registrado.getCedula(),
+                    registrado.getNombre(),
+                    registrado.getTelefono(),
+                    registrado.getEmpresaNIT(),
+                    registrado.getRutaImagen() // podría ser URL si luego lo ajustas
+            );
+
+            return ResponseEntity.ok(dto);
+
+        } catch (RuntimeException | IOException e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
     }
+
 
     @PutMapping("/consumidores/{cedula}")
     public ResponseEntity<Consumidor> actualizarConsumidor(@PathVariable String cedula, @RequestBody Consumidor consumidor) {
