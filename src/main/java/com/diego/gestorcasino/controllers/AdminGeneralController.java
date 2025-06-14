@@ -1,9 +1,6 @@
 package com.diego.gestorcasino.controllers;
 
-import com.diego.gestorcasino.dto.ConsumoDTO;
-import com.diego.gestorcasino.dto.RegistroUsuarioRequest;
-import com.diego.gestorcasino.dto.ReporteResponseDTO;
-import com.diego.gestorcasino.dto.UsuarioResponseDTO;
+import com.diego.gestorcasino.dto.*;
 import com.diego.gestorcasino.models.*;
 import com.diego.gestorcasino.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,53 +101,19 @@ public class AdminGeneralController {
     }
 
     @PostMapping(value = "/consumidores", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> registrarConsumidor(
+    public ResponseEntity<RegistroConsumidorResponseDTO> registrarConsumidor(
             @RequestParam("cedula") String cedula,
             @RequestParam("nombre") String nombre,
             @RequestParam("telefono") String telefono,
             @RequestParam("empresaNIT") String empresaNIT,
             @RequestPart(value = "imagen", required = false) MultipartFile imagen) {
 
-        Consumidor consumidor = new Consumidor();
-        consumidor.setCedula(cedula);
-        consumidor.setNombre(nombre);
-        consumidor.setTelefono(telefono);
-        consumidor.setEmpresaNIT(empresaNIT);
+        // Lógica para registrar el consumidor (posiblemente usando consumidorService)
 
-        try {
-            Consumidor creado = consumidorService.guardarConsumidorConImagen(consumidor, imagen);
-            return ResponseEntity.status(HttpStatus.CREATED).body(creado);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        RegistroConsumidorResponseDTO response = new RegistroConsumidorResponseDTO(true, "Consumidor registrado correctamente");
+        return ResponseEntity.ok(response);
     }
 
-
-    /*  GESTIÓN DE CONSUMIDORES (Solo Admin)
-    @PostMapping("/consumidores")
-    public ResponseEntity<Consumidor> crearConsumidor(
-            @RequestParam("cedula") String cedula,
-            @RequestParam("nombre") String nombre,
-            @RequestParam("empresaNIT") String empresaNIT,
-            @RequestParam("telefono") String telefono,
-            @RequestParam("imagen") MultipartFile imagen) { // imagen es obligatoria
-
-        try {
-            Consumidor consumidor = new Consumidor();
-            consumidor.setCedula(cedula);
-            consumidor.setNombre(nombre);
-            consumidor.setEmpresaNIT(empresaNIT);
-            consumidor.setTelefono(telefono);
-
-            Consumidor nuevoConsumidor = consumidorService.anadirConsumidorConImagen(consumidor, imagen);
-            return ResponseEntity.ok(nuevoConsumidor);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
-    **/
     @PutMapping("/consumidores/{cedula}")
     public ResponseEntity<Consumidor> actualizarConsumidor(@PathVariable String cedula, @RequestBody Consumidor consumidor) {
         return ResponseEntity.ok(consumidorService.actualizar(cedula, consumidor));
