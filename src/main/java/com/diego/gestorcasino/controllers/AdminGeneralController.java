@@ -7,9 +7,12 @@ import com.diego.gestorcasino.dto.UsuarioResponseDTO;
 import com.diego.gestorcasino.models.*;
 import com.diego.gestorcasino.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -101,8 +104,27 @@ public class AdminGeneralController {
 
     //  GESTIÓN DE CONSUMIDORES (Solo Admin)
     @PostMapping("/consumidores")
-    public ResponseEntity<Consumidor> crearConsumidor(@RequestBody Consumidor consumidor) {
-        return ResponseEntity.ok(consumidorService.guardar(consumidor));
+    public ResponseEntity<Consumidor> crearConsumidor(
+            @RequestParam("cedula") String cedula,
+            @RequestParam("nombre") String nombre,
+            @RequestParam("empresaNIT") String empresaNIT,
+            @RequestParam("telefono") String telefono,
+            @RequestParam("imagen") MultipartFile imagen) { // imagen es obligatoria
+
+        try {
+            Consumidor consumidor = new Consumidor();
+            consumidor.setCedula(cedula);
+            consumidor.setNombre(nombre);
+            consumidor.setEmpresaNIT(empresaNIT);
+            consumidor.setTelefono(telefono);
+
+            Consumidor nuevoConsumidor = consumidorService.anadirConsumidorConImagen(consumidor, imagen);
+            return ResponseEntity.ok(nuevoConsumidor);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @PutMapping("/consumidores/{cedula}")

@@ -17,7 +17,7 @@ public class Consumidor {
     @Column(nullable = false)
     private String telefono;
 
-    @Column(nullable = true) // Ruta de la imagen, puede ser nula inicialmente
+    @Column(nullable = true) // Cambiar a false ya que la imagen es obligatoria
     private String rutaImagen;
 
     public String getCedula() {
@@ -71,4 +71,3 @@ public class Consumidor {
                 '}';
     }
 }
-

@@ -38,6 +38,7 @@ public class ConsumidorService {
     }
 
     // MÉTODOS ESTANDARIZADOS (nombres consistentes)
+    @Deprecated(since = "1.0", forRemoval = true)
     public Consumidor guardar(Consumidor consumidor) {
         // Validar si la empresa existe
         empresaClienteRepository.findByNit(consumidor.getEmpresaNIT())
@@ -168,13 +169,16 @@ public class ConsumidorService {
     }
 
     public Consumidor anadirConsumidorConImagen(Consumidor consumidor, MultipartFile imagen) throws IOException {
+        // Validar que la imagen sea obligatoria
+        if (imagen == null || imagen.isEmpty()) {
+            throw new RuntimeException("La imagen es obligatoria para crear un consumidor");
+        }
+        
         // Guardar el consumidor primero
         Consumidor nuevoConsumidor = guardar(consumidor);
 
         // Luego guardar la imagen
-        if (imagen != null && !imagen.isEmpty()) {
-            guardarImagen(consumidor.getCedula(), imagen);
-        }
+        guardarImagen(consumidor.getCedula(), imagen);
 
         return nuevoConsumidor;
     }
