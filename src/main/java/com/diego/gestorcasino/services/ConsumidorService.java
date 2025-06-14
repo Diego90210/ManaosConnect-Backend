@@ -193,4 +193,30 @@ public class ConsumidorService {
             throw new RuntimeException("Error al eliminar la imagen: " + e.getMessage());
         }
     }
+
+    public Consumidor guardarConsumidorConImagen(Consumidor consumidor, MultipartFile imagen) throws IOException {
+        empresaClienteRepository.findByNit(consumidor.getEmpresaNIT());
+
+        // Validar si ya existe consumidor
+        if (consumidorRepository.findByCedula(consumidor.getCedula()).isPresent()) {
+            throw new RuntimeException("Ya existe un consumidor con la cédula: " + consumidor.getCedula());
+        }
+
+        if (imagen != null && !imagen.isEmpty()) {
+            String contentType = imagen.getContentType();
+            if (contentType == null || !contentType.startsWith("image")) {
+                throw new RuntimeException("El archivo debe ser una imagen");
+            }
+
+            String nombreArchivo = consumidor.getCedula() + "_" + imagen.getOriginalFilename();
+            Path rutaArchivo = Paths.get("C:/imagenes_consumidores", nombreArchivo);
+            Files.createDirectories(rutaArchivo.getParent()); // Asegura carpeta
+            Files.write(rutaArchivo, imagen.getBytes());
+
+            consumidor.setRutaImagen(rutaArchivo.toAbsolutePath().toString());
+        }
+
+        return consumidorRepository.save(consumidor);
+    }
+
 }
