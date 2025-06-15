@@ -170,7 +170,7 @@ public class ConsumidorService {
         Path rutaArchivo = Paths.get(directorioImagenes, nombreArchivo);
         Files.write(rutaArchivo, archivo.getBytes());
 
-        consumidor.setRutaImagen(rutaArchivo.toAbsolutePath().toString());
+        consumidor.setRutaImagen("/imagenes/" + nombreArchivo);
         consumidorRepository.save(consumidor);
     }
 
@@ -203,7 +203,7 @@ public class ConsumidorService {
         Files.write(rutaNuevaImagen, nuevaImagen.getBytes());
 
         // Actualizar la ruta en el consumidor
-        consumidor.setRutaImagen(rutaNuevaImagen.toString());
+        consumidor.setRutaImagen("/imagenes/" + nombreArchivo);
         consumidorRepository.save(consumidor);
     }
 
@@ -252,7 +252,7 @@ public class ConsumidorService {
             Files.createDirectories(rutaArchivo.getParent()); // Asegura carpeta
             Files.write(rutaArchivo, imagen.getBytes());
 
-            consumidor.setRutaImagen(rutaArchivo.toAbsolutePath().toString());
+            consumidor.setRutaImagen("/imagenes/" + nombreArchivo);
         }
 
         return consumidorRepository.save(consumidor);
