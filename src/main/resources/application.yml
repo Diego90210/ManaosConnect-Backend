@@ -1,4 +1,7 @@
 spring:
+  web:
+    resources:
+      static-locations: [ "file:C:/imagenes_rostros/imagenes/" ]
   datasource:
     url: jdbc:postgresql://localhost:5332/manaosconnect_db
     username: user
@@ -16,6 +19,7 @@ spring:
 
 directorio:
   imagenes: C:/imagenes_rostros/
+
 
 # Configuración de setup inicial
 app:

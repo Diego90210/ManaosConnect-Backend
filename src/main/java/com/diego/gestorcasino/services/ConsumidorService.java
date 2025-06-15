@@ -76,28 +76,34 @@ public class ConsumidorService {
         consumidor.setEmpresaNIT(empresaNIT);
 
         if (imagen != null && !imagen.isEmpty()) {
+            // Validar que sea una imagen
             String contentType = imagen.getContentType();
             if (contentType == null || !contentType.startsWith("image")) {
-                throw new RuntimeException("El archivo debe ser una imagen");
+                throw new IllegalArgumentException("El archivo debe ser una imagen");
             }
 
-            // Opcional: borrar imagen anterior
+            // Borrar imagen anterior si existe
             if (consumidor.getRutaImagen() != null) {
                 try {
-                    Files.deleteIfExists(Paths.get(consumidor.getRutaImagen()));
-                } catch (IOException ignored) {}
+                    Path rutaAnterior = Paths.get("C:/imagenes_consumidores", Paths.get(consumidor.getRutaImagen()).getFileName().toString());
+                    Files.deleteIfExists(rutaAnterior);
+                } catch (IOException e) {
+                    // Log interno si deseas
+                }
             }
 
-            String nombreArchivo = cedula + "_" + imagen.getOriginalFilename();
+            // Guardar nueva imagen
+            String nombreArchivo = cedula + "_" + imagen.getOriginalFilename().replaceAll("\\s+", "_");
             Path rutaArchivo = Paths.get("C:/imagenes_consumidores", nombreArchivo);
             Files.createDirectories(rutaArchivo.getParent());
             Files.write(rutaArchivo, imagen.getBytes());
 
-            consumidor.setRutaImagen("/imagenes/" + nombreArchivo); // URL pública
+            consumidor.setRutaImagen("/imagenes/" + nombreArchivo); // Ruta pública
         }
 
         return consumidorRepository.save(consumidor);
     }
+
 
 
     public void eliminar(String cedula) {

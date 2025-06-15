@@ -112,12 +112,16 @@ public class AdminGeneralController {
         try {
             Consumidor registrado = consumidorService.registrarConsumidor(cedula, nombre, telefono, empresaNIT, imagen);
 
+            String imagenUrl = registrado.getRutaImagen() != null
+                    ? "http://localhost:8080" + registrado.getRutaImagen()
+                    : null;
+
             ConsumidorResponseDTO dto = new ConsumidorResponseDTO(
                     registrado.getCedula(),
                     registrado.getNombre(),
                     registrado.getTelefono(),
                     registrado.getEmpresaNIT(),
-                    registrado.getRutaImagen() // podría ser URL si luego lo ajustas
+                    imagenUrl
             );
 
             return ResponseEntity.ok(dto);
@@ -129,6 +133,7 @@ public class AdminGeneralController {
             return ResponseEntity.badRequest().body(error);
         }
     }
+
 
 
     @PutMapping(value = "/consumidores/{cedula}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
