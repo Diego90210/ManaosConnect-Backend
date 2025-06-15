@@ -59,7 +59,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource())) // ← AGREGAR ESTA LÍNEA
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> {
                 // ENDPOINTS PÚBLICOS
@@ -69,7 +69,8 @@ public class SecurityConfig {
                 auth.requestMatchers("/auth/**").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/public/**").permitAll()
-                    
+                        .requestMatchers("/imagenes/**").permitAll()
+
                     // GESTIÓN DE USUARIOS - SOLO ADMIN
                     .requestMatchers("/admin/usuarios/**").hasRole("ADMIN")
                     .requestMatchers("/admin/administradores/**").hasRole("ADMIN")

@@ -60,14 +60,4 @@ public class Consumidor {
         this.rutaImagen = rutaImagen;
     }
 
-    @Override
-    public String toString() {
-        return "Consumidor{" +
-                "cedula='" + cedula + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", empresaNIT='" + empresaNIT + '\'' +
-                ", telefono='" + telefono + '\'' +
-                ", rutaImagen='" + rutaImagen + '\'' +
-                '}';
-    }
 }
