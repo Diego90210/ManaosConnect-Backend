@@ -5,11 +5,11 @@ import java.util.List;
 public class ConsumoDTO {
 
     private int id;
-    private String cedulaEmpleado;
+    private String cedulaConsumidor;
     private String fecha;
     private double total;
-    private String nombreEmpleado;
-    private String rutaImagenEmpleado;
+    private String nombreConsumidor;
+    private String rutaImagenConsumidor;
     private List<PlatoConsumoDTO> platosConsumidos;
 
     // Getters y Setters
@@ -21,12 +21,12 @@ public class ConsumoDTO {
         this.id = id;
     }
 
-    public String getCedulaEmpleado() {
-        return cedulaEmpleado;
+    public String getCedulaConsumidor() {
+        return cedulaConsumidor;
     }
 
-    public void setCedulaEmpleado(String cedulaEmpleado) {
-        this.cedulaEmpleado = cedulaEmpleado;
+    public void setCedulaConsumidor(String cedulaConsumidor) {
+        this.cedulaConsumidor = cedulaConsumidor;
     }
 
     public String getFecha() {
@@ -53,31 +53,31 @@ public class ConsumoDTO {
         this.platosConsumidos = platosConsumidos;
     }
 
-    public String getNombreEmpleado() {
-        return nombreEmpleado;
+    public String getNombreConsumidor() {
+        return nombreConsumidor;
     }
 
-    public void setNombreEmpleado(String nombreEmpleado) {
-        this.nombreEmpleado = nombreEmpleado;
+    public void setNombreConsumidor(String nombreConsumidor) {
+        this.nombreConsumidor = nombreConsumidor;
     }
 
-    public String getRutaImagenEmpleado() {
-        return rutaImagenEmpleado;
+    public String getRutaImagenConsumidor() {
+        return rutaImagenConsumidor;
     }
 
-    public void setRutaImagenEmpleado(String rutaImagenEmpleado) {
-        this.rutaImagenEmpleado = rutaImagenEmpleado;
+    public void setRutaImagenConsumidor(String rutaImagenConsumidor) {
+        this.rutaImagenConsumidor = rutaImagenConsumidor;
     }
 
     @Override
     public String toString() {
         return "ConsumoDTO{" +
                 "id=" + id +
-                ", cedulaEmpleado='" + cedulaEmpleado + '\'' +
+                ", cedulaEmpleado='" + cedulaConsumidor + '\'' +
                 ", fecha='" + fecha + '\'' +
                 ", total=" + total +
-                ", nombreEmpleado='" + nombreEmpleado + '\'' +
-                ", rutaImagenEmpleado='" + rutaImagenEmpleado + '\'' +
+                ", nombreEmpleado='" + nombreConsumidor + '\'' +
+                ", rutaImagenEmpleado='" + rutaImagenConsumidor + '\'' +
                 ", platosConsumidos=" + platosConsumidos +
                 '}';
     }

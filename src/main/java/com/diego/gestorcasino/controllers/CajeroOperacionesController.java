@@ -1,5 +1,6 @@
 package com.diego.gestorcasino.controllers;
 
+import com.diego.gestorcasino.dto.ConsumidorResponseDTO;
 import com.diego.gestorcasino.dto.ConsumoDTO;
 import com.diego.gestorcasino.models.*;
 import com.diego.gestorcasino.repositories.ConsumidorRepository;
@@ -121,11 +122,25 @@ public class CajeroOperacionesController {
     }
 
     @GetMapping("/consumidores/{cedula}")
-    public ResponseEntity<Consumidor> obtenerConsumidor(@PathVariable String cedula) {
+    public ResponseEntity<ConsumidorResponseDTO> obtenerConsumidor(@PathVariable String cedula) {
         return consumidorService.buscarPorCedula(cedula)
-                .map(ResponseEntity::ok)
+                .map(consumidor -> {
+                    String imagenUrl = consumidor.getRutaImagen() != null
+                            ? "http://localhost:8080" + consumidor.getRutaImagen()
+                            : null;
+
+                    ConsumidorResponseDTO dto = new ConsumidorResponseDTO(
+                            consumidor.getCedula(),
+                            consumidor.getNombre(),
+                            consumidor.getTelefono(),
+                            consumidor.getEmpresaNIT(),
+                            imagenUrl
+                    );
+                    return ResponseEntity.ok(dto);
+                })
                 .orElseThrow(() -> new RuntimeException("Consumidor no encontrado"));
     }
+
 
     //  ENDPOINT ESPECÍFICO PARA EL FLUJO DE REGISTRO DE CONSUMO
     @GetMapping("/consumidores/empresa/{nit}")

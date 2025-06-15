@@ -206,9 +206,9 @@ public class ConsumoService {
 
         ConsumoDTO consumoDTO = new ConsumoDTO();
         consumoDTO.setId(consumo.getId());
-        consumoDTO.setCedulaEmpleado(consumidor.getCedula());
-        consumoDTO.setNombreEmpleado(consumidor.getNombre());
-        consumoDTO.setRutaImagenEmpleado(consumidor.getRutaImagen());
+        consumoDTO.setCedulaConsumidor(consumidor.getCedula());
+        consumoDTO.setNombreConsumidor(consumidor.getNombre());
+        consumoDTO.setRutaImagenConsumidor(consumidor.getRutaImagen());
         consumoDTO.setFecha(consumo.getFecha().toString());
         consumoDTO.setTotal(consumo.getTotal());
         consumoDTO.setPlatosConsumidos(consumo.getPlatosConsumidos().stream()
