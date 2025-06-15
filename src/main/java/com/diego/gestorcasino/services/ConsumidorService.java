@@ -67,6 +67,39 @@ public class ConsumidorService {
         return consumidorRepository.save(consumidorExistente);
     }
 
+    public Consumidor actualizarConsumidorConImagen(String cedula, String nombre, String telefono, String empresaNIT, MultipartFile imagen) throws IOException {
+        Consumidor consumidor = consumidorRepository.findByCedula(cedula)
+                .orElseThrow(() -> new RuntimeException("Consumidor no encontrado con cédula: " + cedula));
+
+        consumidor.setNombre(nombre);
+        consumidor.setTelefono(telefono);
+        consumidor.setEmpresaNIT(empresaNIT);
+
+        if (imagen != null && !imagen.isEmpty()) {
+            String contentType = imagen.getContentType();
+            if (contentType == null || !contentType.startsWith("image")) {
+                throw new RuntimeException("El archivo debe ser una imagen");
+            }
+
+            // Opcional: borrar imagen anterior
+            if (consumidor.getRutaImagen() != null) {
+                try {
+                    Files.deleteIfExists(Paths.get(consumidor.getRutaImagen()));
+                } catch (IOException ignored) {}
+            }
+
+            String nombreArchivo = cedula + "_" + imagen.getOriginalFilename();
+            Path rutaArchivo = Paths.get("C:/imagenes_consumidores", nombreArchivo);
+            Files.createDirectories(rutaArchivo.getParent());
+            Files.write(rutaArchivo, imagen.getBytes());
+
+            consumidor.setRutaImagen("/imagenes/" + nombreArchivo); // URL pública
+        }
+
+        return consumidorRepository.save(consumidor);
+    }
+
+
     public void eliminar(String cedula) {
         Consumidor consumidor = consumidorRepository.findByCedula(cedula)
                 .orElseThrow(() -> new RuntimeException("Consumidor no encontrado con cédula: " + cedula));

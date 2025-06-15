@@ -132,10 +132,31 @@ public class AdminGeneralController {
     }
 
 
-    @PutMapping("/consumidores/{cedula}")
-    public ResponseEntity<Consumidor> actualizarConsumidor(@PathVariable String cedula, @RequestBody Consumidor consumidor) {
-        return ResponseEntity.ok(consumidorService.actualizar(cedula, consumidor));
+    @PutMapping(value = "/consumidores/{cedula}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> actualizarConsumidor(
+            @PathVariable String cedula,
+            @RequestParam("nombre") String nombre,
+            @RequestParam("telefono") String telefono,
+            @RequestParam("empresaNIT") String empresaNIT,
+            @RequestPart(value = "imagen", required = false) MultipartFile imagen) {
+
+        try {
+            Consumidor consumidorActualizado = consumidorService.actualizarConsumidorConImagen(cedula, nombre, telefono, empresaNIT, imagen);
+
+            ConsumidorResponseDTO dto = new ConsumidorResponseDTO(
+                    consumidorActualizado.getCedula(),
+                    consumidorActualizado.getNombre(),
+                    consumidorActualizado.getTelefono(),
+                    consumidorActualizado.getEmpresaNIT(),
+                    consumidorActualizado.getRutaImagen()
+            );
+
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al actualizar consumidor: " + e.getMessage());
+        }
     }
+
 
     @DeleteMapping("/consumidores/{cedula}")
     public ResponseEntity<String> eliminarConsumidor(@PathVariable String cedula) {
