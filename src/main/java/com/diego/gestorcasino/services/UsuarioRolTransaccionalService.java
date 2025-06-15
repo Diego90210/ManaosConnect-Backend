@@ -2,6 +2,7 @@ package com.diego.gestorcasino.services;
 
 import com.diego.gestorcasino.dto.RegistroUsuarioRequest;
 import com.diego.gestorcasino.dto.UsuarioResponseDTO;
+import com.diego.gestorcasino.dto.UsuarioUpdateRequestDTO;
 import com.diego.gestorcasino.models.*;
 import com.diego.gestorcasino.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ public class UsuarioRolTransaccionalService {
 
     @Autowired
     private UsuarioService usuarioService;
+
 
     @Transactional
     public Usuario registrarUsuarioCompleto(RegistroUsuarioRequest request) {
@@ -204,4 +206,98 @@ public class UsuarioRolTransaccionalService {
         contador.setTelefono(request.getTelefono());
         contadorRepository.save(contador);
     }
+
+    public Usuario actualizarUsuario(String cedula, UsuarioUpdateRequestDTO datosActualizados) {
+        Usuario usuario = usuarioRepository.findByCedula(cedula)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con cédula: " + cedula));
+
+        // Validar que el nuevo email no esté en uso por otro usuario
+        if (!usuario.getEmail().equalsIgnoreCase(datosActualizados.getEmail())) {
+            if (usuarioRepository.existsByEmail(datosActualizados.getEmail())) {
+                throw new RuntimeException("El correo electrónico ya está en uso por otro usuario");
+            }
+            usuario.setEmail(datosActualizados.getEmail());
+        }
+
+        // Actualizar contraseña si viene presente
+        if (datosActualizados.getPassword() != null && !datosActualizados.getPassword().isBlank()) {
+            usuario.setPassword(passwordEncoder.encode(datosActualizados.getPassword()));
+        }
+
+        usuarioRepository.save(usuario);
+
+        // Actualizar datos en la subentidad correspondiente
+        switch (usuario.getRol()) {
+            case ADMIN -> {
+                Administrador admin = administradorRepository.findByCedula(cedula)
+                        .orElseThrow(() -> new RuntimeException("Administrador no encontrado"));
+                admin.setNombre(datosActualizados.getNombre());
+                admin.setTelefono(datosActualizados.getTelefono());
+                administradorRepository.save(admin);
+            }
+            case CAJERO -> {
+                Cajero cajero = cajeroRepository.findByCedula(cedula)
+                        .orElseThrow(() -> new RuntimeException("Cajero no encontrado"));
+                cajero.setNombre(datosActualizados.getNombre());
+                cajero.setTelefono(datosActualizados.getTelefono());
+                cajeroRepository.save(cajero);
+            }
+            case CONTADOR -> {
+                Contador contador = contadorRepository.findByCedula(cedula)
+                        .orElseThrow(() -> new RuntimeException("Contador no encontrado"));
+                contador.setNombre(datosActualizados.getNombre());
+                contador.setTelefono(datosActualizados.getTelefono());
+                contadorRepository.save(contador);
+            }
+            default -> throw new RuntimeException("Rol no soportado para actualización");
+        }
+
+        return usuario;
+    }
+
+    public List<UsuarioResponseDTO> listarUsuariosDesactivados() {
+        List<Usuario> usuariosInactivos = usuarioRepository.findByActivoFalse();
+
+        return usuariosInactivos.stream().map(usuario -> {
+            String nombre = "";
+            String telefono = "";
+
+            switch (usuario.getRol()) {
+                case ADMIN -> {
+                    Administrador admin = administradorRepository.findByCedula(usuario.getCedula())
+                            .orElse(null);
+                    if (admin != null) {
+                        nombre = admin.getNombre();
+                        telefono = admin.getTelefono();
+                    }
+                }
+                case CAJERO -> {
+                    Cajero cajero = cajeroRepository.findByCedula(usuario.getCedula())
+                            .orElse(null);
+                    if (cajero != null) {
+                        nombre = cajero.getNombre();
+                        telefono = cajero.getTelefono();
+                    }
+                }
+                case CONTADOR -> {
+                    Contador contador = contadorRepository.findByCedula(usuario.getCedula())
+                            .orElse(null);
+                    if (contador != null) {
+                        nombre = contador.getNombre();
+                        telefono = contador.getTelefono();
+                    }
+                }
+            }
+
+            return new UsuarioResponseDTO(
+                    usuario.getCedula(),
+                    nombre,
+                    telefono,
+                    usuario.getEmail(),
+                    usuario.getRol().name()
+            );
+        }).toList();
+    }
+
+
 }

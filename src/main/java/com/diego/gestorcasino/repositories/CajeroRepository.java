@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface CajeroRepository extends JpaRepository<Cajero, String> {
     Optional<Cajero> findByUsuario(Usuario usuario);
+    Optional<Cajero> findByCedula(String cedula);
 }
 

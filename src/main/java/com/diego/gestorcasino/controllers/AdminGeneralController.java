@@ -74,6 +74,28 @@ public class AdminGeneralController {
         }
     }
 
+    @PutMapping("/usuarios/{cedula}")
+    public ResponseEntity<?> actualizarUsuario(
+            @PathVariable String cedula,
+            @RequestBody UsuarioUpdateRequestDTO datosActualizados) {
+
+        try {
+            Usuario usuarioActualizado = usuarioRolTransaccionalService.actualizarUsuario(cedula, datosActualizados);
+            return ResponseEntity.ok(usuarioActualizado);
+        } catch (RuntimeException e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    @GetMapping("/usuarios/desactivados")
+    public ResponseEntity<List<UsuarioResponseDTO>> listarUsuariosDesactivados() {
+        List<UsuarioResponseDTO> desactivados = usuarioRolTransaccionalService.listarUsuariosDesactivados();
+        return ResponseEntity.ok(desactivados);
+    }
+
 
     //  GESTIÓN DE EMPRESAS (Solo Admin)
     @PostMapping("/empresas")
@@ -101,6 +123,7 @@ public class AdminGeneralController {
         return ResponseEntity.ok(empresaService.listarTodas());
     }
 
+    //GESTIÓN DE CONSUMIDORES
     @PostMapping(value = "/consumidores", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registrarConsumidor(
             @RequestParam("cedula") String cedula,
@@ -133,8 +156,6 @@ public class AdminGeneralController {
             return ResponseEntity.badRequest().body(error);
         }
     }
-
-
 
     @PutMapping(value = "/consumidores/{cedula}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> actualizarConsumidor(

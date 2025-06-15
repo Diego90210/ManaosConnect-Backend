@@ -8,5 +8,7 @@ import java.util.Optional;
 
 public interface ContadorRepository extends JpaRepository<Contador, String> {
     Optional<Contador> findByUsuario(Usuario usuario);
+
+    Optional<Contador> findByCedula(String cedula);
 }
 
