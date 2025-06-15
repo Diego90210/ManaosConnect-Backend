@@ -1,11 +1,14 @@
 package com.diego.gestorcasino.controllers;
 
+import com.diego.gestorcasino.dto.ConsumoDTO;
 import com.diego.gestorcasino.models.*;
+import com.diego.gestorcasino.repositories.ConsumidorRepository;
 import com.diego.gestorcasino.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -25,15 +28,34 @@ public class CajeroOperacionesController {
     private ConsumidorService consumidorService;
 
     //  GESTIÓN DE CONSUMOS (Cajero puede hacer todo)
+    @Autowired
+    private ConsumidorRepository consumidorRepository;
+
     @PostMapping("/consumos")
-    public ResponseEntity<Consumo> registrarConsumo(@RequestBody Consumo consumo) {
+    public ResponseEntity<Consumo> registrarConsumo(@RequestBody Consumo consumo, Principal principal) {
         try {
+            // Validación de existencia del consumidor
+            if (consumidorRepository.findByCedula(consumo.getCedulaConsumidor()).isEmpty()) {
+                return ResponseEntity.badRequest().body(null);
+            }
+
+            // Asignar al cajero que realiza el registro
+            consumo.setCedulaCajero(principal.getName());
+
             Consumo nuevo = consumoService.guardar(consumo);
             return ResponseEntity.ok(nuevo);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
+    @GetMapping("/mis-consumos")
+    public ResponseEntity<List<Consumo>> obtenerMisConsumos(Principal principal) {
+        String cedulaCajero = principal.getName();
+        List<Consumo> consumos = consumoService.listarPorCajero(cedulaCajero);
+        return ResponseEntity.ok(consumos);
+    }
+
 
     @PutMapping("/consumos/{id}")
     public ResponseEntity<Consumo> actualizarConsumo(@PathVariable int id, @RequestBody Consumo consumo) {

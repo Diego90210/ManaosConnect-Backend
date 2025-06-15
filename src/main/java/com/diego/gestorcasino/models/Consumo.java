@@ -2,7 +2,6 @@ package com.diego.gestorcasino.models;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,7 +13,10 @@ public class Consumo {
     private int id;
 
     @Column(nullable = false)
-    private String cedulaEmpleado;
+    private String cedulaCajero;
+
+    @Column(nullable = false)
+    private String cedulaConsumidor;
 
     @Column(nullable = false)
     private LocalDate fecha;
@@ -35,12 +37,12 @@ public class Consumo {
         this.id = id;
     }
 
-    public String getCedulaEmpleado() {
-        return cedulaEmpleado;
+    public String getCedulaConsumidor() {
+        return cedulaConsumidor;
     }
 
-    public void setCedulaEmpleado(String cedulaEmpleado) {
-        this.cedulaEmpleado = cedulaEmpleado;
+    public void setCedulaConsumidor(String cedulaEmpleado) {
+        this.cedulaConsumidor = cedulaEmpleado;
     }
 
     public LocalDate getFecha() {
@@ -61,6 +63,14 @@ public class Consumo {
 
     public List<PlatoConsumo> getPlatosConsumidos() {
         return platosConsumidos;
+    }
+
+    public String getCedulaCajero() {
+        return cedulaCajero;
+    }
+
+    public void setCedulaCajero(String cedulaCajero) {
+        this.cedulaCajero = cedulaCajero;
     }
 
     public void setPlatosConsumidos(List<PlatoConsumo> platosConsumidos) {

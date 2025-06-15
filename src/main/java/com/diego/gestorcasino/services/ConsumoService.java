@@ -32,8 +32,8 @@ public class ConsumoService {
     // MÉTODOS ESTANDARIZADOS (nombres consistentes)
     public Consumo guardar(Consumo consumo) {
         // Verificar si el empleado existe
-        if (consumidorRepository.findByCedula(consumo.getCedulaEmpleado()).isEmpty()) {
-            throw new RuntimeException("Consumidor no encontrado con cédula: " + consumo.getCedulaEmpleado());
+        if (consumidorRepository.findByCedula(consumo.getCedulaConsumidor()).isEmpty()) {
+            throw new RuntimeException("Consumidor no encontrado con cédula: " + consumo.getCedulaConsumidor());
         }
 
         for (PlatoConsumo platoConsumo : consumo.getPlatosConsumidos()) {
@@ -135,7 +135,7 @@ public class ConsumoService {
     public List<Consumo> listarPorEmpresa(String nit) {
         return consumoRepository.findAll().stream()
                 .filter(consumo -> {
-                    Optional<Consumidor> consumidor = consumidorRepository.findByCedula(consumo.getCedulaEmpleado());
+                    Optional<Consumidor> consumidor = consumidorRepository.findByCedula(consumo.getCedulaConsumidor());
                     return consumidor.isPresent() && nit.equals(consumidor.get().getEmpresaNIT());
                 })
                 .toList();
@@ -144,7 +144,7 @@ public class ConsumoService {
     public List<Consumo> listarPorEmpresaEnPeriodo(String nit, LocalDate fechaInicio, LocalDate fechaFin) {
         return consumoRepository.findAll().stream()
                 .filter(consumo -> {
-                    Optional<Consumidor> consumidor = consumidorRepository.findByCedula(consumo.getCedulaEmpleado());
+                    Optional<Consumidor> consumidor = consumidorRepository.findByCedula(consumo.getCedulaConsumidor());
                     return consumidor.isPresent() && nit.equals(consumidor.get().getEmpresaNIT());
                 })
                 .filter(consumo -> !consumo.getFecha().isBefore(fechaInicio) && !consumo.getFecha().isAfter(fechaFin))
@@ -169,20 +169,20 @@ public class ConsumoService {
         return consumos.stream().map(this::convertirAConsumoDTO).collect(Collectors.toList());
     }
 
-    public List<ConsumoDTO> obtenerConsumosPorEmpleado(String cedulaEmpleado) {
+    public List<ConsumoDTO> obtenerConsumosPorConsumidor(String cedulaEmpleado) {
         // Validar que el empleado existe antes de buscar los consumos
         Consumidor consumidor = consumidorRepository.findByCedula(cedulaEmpleado)
                 .orElseThrow(() -> new RuntimeException("Consumidor no encontrado con cédula: " + cedulaEmpleado));
 
         // Obtener consumos asociados al empleado
-        List<Consumo> consumos = consumoRepository.findByCedulaEmpleado(cedulaEmpleado);
+        List<Consumo> consumos = consumoRepository.findByCedulaConsumidor(cedulaEmpleado);
 
         // Convertir cada consumo a ConsumoDTO
         return consumos.stream().map(this::convertirAConsumoDTO).collect(Collectors.toList());
     }
 
     public Consumo anadirConsumo(String cedulaEmpleado, Consumo consumo) {
-        consumo.setCedulaEmpleado(cedulaEmpleado);
+        consumo.setCedulaConsumidor(cedulaEmpleado);
         return guardar(consumo);
     }
 
@@ -201,8 +201,8 @@ public class ConsumoService {
     }
 
     public ConsumoDTO convertirAConsumoDTO(Consumo consumo) {
-        Consumidor consumidor = consumidorRepository.findByCedula(consumo.getCedulaEmpleado())
-                .orElseThrow(() -> new RuntimeException("Consumidor no encontrado con cédula: " + consumo.getCedulaEmpleado()));
+        Consumidor consumidor = consumidorRepository.findByCedula(consumo.getCedulaConsumidor())
+                .orElseThrow(() -> new RuntimeException("Consumidor no encontrado con cédula: " + consumo.getCedulaConsumidor()));
 
         ConsumoDTO consumoDTO = new ConsumoDTO();
         consumoDTO.setId(consumo.getId());
@@ -221,5 +221,8 @@ public class ConsumoService {
                 .collect(Collectors.toList()));
 
         return consumoDTO;
+    }
+    public List<Consumo> listarPorCajero(String cedulaCajero) {
+        return consumoRepository.findByCedulaCajero(cedulaCajero);
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/consumos")
@@ -16,6 +15,19 @@ public class ConsumoController {
 
     @Autowired
     private ConsumoService consumoService;
+
+    @PostMapping
+    public ResponseEntity<Consumo> registrarConsumo(@RequestBody Consumo consumo, java.security.Principal principal) {
+        try {
+            String cedulaCajero = principal.getName(); // obtiene la cédula del usuario autenticado
+            consumo.setCedulaConsumidor(cedulaCajero);   // o consumo.setCedulaCajero(...)
+
+            Consumo nuevo = consumoService.guardar(consumo);
+            return ResponseEntity.ok(nuevo);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 
     // Obtener todos los consumos
     @GetMapping
@@ -27,17 +39,10 @@ public class ConsumoController {
 
     @GetMapping("/empleado/{cedula}")
     public ResponseEntity<List<ConsumoDTO>> obtenerConsumosPorEmpleado(@PathVariable String cedula) {
-        List<ConsumoDTO> consumosDTO = consumoService.obtenerConsumosPorEmpleado(cedula);
+        List<ConsumoDTO> consumosDTO = consumoService.obtenerConsumosPorConsumidor(cedula);
         return ResponseEntity.ok(consumosDTO);
     }
 
-
-    // Crear un nuevo consumo
-    @PostMapping
-    public ResponseEntity<Consumo> anadirConsumo(@RequestBody Consumo consumo) {
-        Consumo nuevoConsumo = consumoService.anadirConsumo(consumo.getCedulaEmpleado(),consumo);
-        return ResponseEntity.ok(nuevoConsumo);
-    }
 
     // Actualizar un consumo
     @PutMapping("/{id}")

@@ -81,8 +81,8 @@ public class ReporteService {
 
         // Obtener consumos de los empleados de la empresa dentro del rango de fechas
         List<Consumo> consumosEmpresa = consumoRepository.findAll().stream()
-                .filter(consumo -> consumo.getCedulaEmpleado() != null)
-                .filter(consumo -> cedulasConsumidores.contains(consumo.getCedulaEmpleado()))
+                .filter(consumo -> consumo.getCedulaConsumidor() != null)
+                .filter(consumo -> cedulasConsumidores.contains(consumo.getCedulaConsumidor()))
                 .filter(consumo -> !consumo.getFecha().isBefore(fechaInicio) && !consumo.getFecha().isAfter(fechaFin))
                 .collect(Collectors.toList());
 
@@ -148,8 +148,8 @@ public class ReporteService {
 
         // Calcular total de consumos en el período
         return consumoRepository.findAll().stream()
-                .filter(consumo -> consumo.getCedulaEmpleado() != null)
-                .filter(consumo -> cedulasConsumidores.contains(consumo.getCedulaEmpleado()))
+                .filter(consumo -> consumo.getCedulaConsumidor() != null)
+                .filter(consumo -> cedulasConsumidores.contains(consumo.getCedulaConsumidor()))
                 .filter(consumo -> !consumo.getFecha().isBefore(fechaInicio) && !consumo.getFecha().isAfter(fechaFin))
                 .mapToDouble(Consumo::getTotal)
                 .sum();
@@ -172,8 +172,8 @@ public class ReporteService {
 
         // Obtener consumos en el período
         return consumoRepository.findAll().stream()
-                .filter(consumo -> consumo.getCedulaEmpleado() != null)
-                .filter(consumo -> cedulasConsumidores.contains(consumo.getCedulaEmpleado()))
+                .filter(consumo -> consumo.getCedulaConsumidor() != null)
+                .filter(consumo -> cedulasConsumidores.contains(consumo.getCedulaConsumidor()))
                 .filter(consumo -> !consumo.getFecha().isBefore(fechaInicio) && !consumo.getFecha().isAfter(fechaFin))
                 .collect(Collectors.toList());
     }
@@ -235,14 +235,14 @@ private List<EmpleadoReporteDTO> obtenerEmpleadosConConsumos(String nitEmpresa, 
 
     // Obtener consumos en el período
     List<Consumo> consumosEmpresa = consumoRepository.findAll().stream()
-            .filter(consumo -> consumo.getCedulaEmpleado() != null)
-            .filter(consumo -> cedulasConsumidores.contains(consumo.getCedulaEmpleado()))
+            .filter(consumo -> consumo.getCedulaConsumidor() != null)
+            .filter(consumo -> cedulasConsumidores.contains(consumo.getCedulaConsumidor()))
             .filter(consumo -> !consumo.getFecha().isBefore(fechaInicio) && !consumo.getFecha().isAfter(fechaFin))
             .collect(Collectors.toList());
 
     // Agrupar consumos por empleado y calcular totales
     return consumosEmpresa.stream()
-            .collect(Collectors.groupingBy(Consumo::getCedulaEmpleado))
+            .collect(Collectors.groupingBy(Consumo::getCedulaConsumidor))
             .entrySet().stream()
             .map(entry -> {
                 String cedula = entry.getKey();
