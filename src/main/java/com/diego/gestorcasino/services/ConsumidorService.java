@@ -71,7 +71,6 @@ public class ConsumidorService {
         Consumidor consumidor = consumidorRepository.findByCedula(cedula)
                 .orElseThrow(() -> new RuntimeException("Consumidor no encontrado con cédula: " + cedula));
 
-        consumidor.setCedula(cedula);
         consumidor.setNombre(nombre);
         consumidor.setTelefono(telefono);
         consumidor.setEmpresaNIT(empresaNIT);
