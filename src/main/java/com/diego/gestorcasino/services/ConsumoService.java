@@ -2,6 +2,7 @@ package com.diego.gestorcasino.services;
 
 import com.diego.gestorcasino.dto.ConsumoDTO;
 import com.diego.gestorcasino.dto.PlatoConsumoDTO;
+import com.diego.gestorcasino.dto.RegistroConsumoRequest;
 import com.diego.gestorcasino.models.Consumidor;
 import com.diego.gestorcasino.models.Consumo;
 import com.diego.gestorcasino.models.Plato;
@@ -225,4 +226,47 @@ public class ConsumoService {
     public List<Consumo> listarPorCajero(String cedulaCajero) {
         return consumoRepository.findByCedulaCajero(cedulaCajero);
     }
+
+    public Consumo registrarDesdeDTO(RegistroConsumoRequest request) {
+        // Validar consumidor
+        Consumidor consumidor = consumidorRepository.findByCedula(request.getCedulaConsumidor())
+                .orElseThrow(() -> new RuntimeException("Consumidor no encontrado con cédula: " + request.getCedulaConsumidor()));
+
+        // Crear nuevo consumo
+        Consumo consumo = new Consumo();
+        consumo.setCedulaConsumidor(request.getCedulaConsumidor());
+        consumo.setCedulaCajero(request.getCedulaCajero());
+        consumo.setFecha(request.getFecha());
+
+        // Crear lista de platos consumidos
+        List<PlatoConsumo> platos = request.getPlatos().stream().map(p -> {
+            Plato plato = platoRepository.findByNombreIgnoreCase(p.getNombrePlato())
+                    .orElseThrow(() -> new RuntimeException("Plato no encontrado: " + p.getNombrePlato()));
+
+            if (plato.getPrecio() <= 0) {
+                throw new RuntimeException("Precio inválido para plato: " + plato.getNombre());
+            }
+
+            PlatoConsumo pc = new PlatoConsumo();
+            pc.setNombrePlato(plato.getNombre());
+            pc.setCantidad(p.getCantidad());
+            pc.setConsumo(consumo); // relación bidireccional
+
+            return pc;
+        }).toList();
+
+        consumo.setPlatosConsumidos(platos);
+
+        // Calcular total
+        double total = platos.stream()
+                .mapToDouble(p -> {
+                    Plato plato = platoRepository.findByNombreIgnoreCase(p.getNombrePlato())
+                            .orElseThrow();
+                    return plato.getPrecio() * p.getCantidad();
+                }).sum();
+        consumo.setTotal(total);
+
+        return consumoRepository.save(consumo);
+    }
+
 }

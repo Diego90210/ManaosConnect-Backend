@@ -1,10 +1,14 @@
 package com.diego.gestorcasino.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class PlatoCantidadDTO {
 
     private String nombrePlato;
     private int cantidad;
+
+    @JsonIgnore
     private double precioUnitario;
 
     // Getters y setters

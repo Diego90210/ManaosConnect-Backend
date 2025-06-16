@@ -2,6 +2,7 @@ package com.diego.gestorcasino.controllers;
 
 import com.diego.gestorcasino.dto.ConsumidorResponseDTO;
 import com.diego.gestorcasino.dto.ConsumoDTO;
+import com.diego.gestorcasino.dto.RegistroConsumoRequest;
 import com.diego.gestorcasino.models.*;
 import com.diego.gestorcasino.repositories.ConsumidorRepository;
 import com.diego.gestorcasino.services.*;
@@ -33,20 +34,16 @@ public class CajeroOperacionesController {
     private ConsumidorRepository consumidorRepository;
 
     @PostMapping("/consumos")
-    public ResponseEntity<Consumo> registrarConsumo(@RequestBody Consumo consumo, Principal principal) {
+    public ResponseEntity<?> registrarConsumo(@RequestBody RegistroConsumoRequest request, Principal principal) {
         try {
-            // Validación de existencia del consumidor
-            if (consumidorRepository.findByCedula(consumo.getCedulaConsumidor()).isEmpty()) {
-                return ResponseEntity.badRequest().body(null);
-            }
+            // Asignar automáticamente la cédula del cajero desde la sesión
+            request.setCedulaCajero(principal.getName());
 
-            // Asignar al cajero que realiza el registro
-            consumo.setCedulaCajero(principal.getName());
+            Consumo nuevoConsumo = consumoService.registrarDesdeDTO(request);
+            return ResponseEntity.ok(nuevoConsumo);
 
-            Consumo nuevo = consumoService.guardar(consumo);
-            return ResponseEntity.ok(nuevo);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body("Error al registrar consumo: " + e.getMessage());
         }
     }
 
