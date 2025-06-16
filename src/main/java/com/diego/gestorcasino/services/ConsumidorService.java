@@ -85,7 +85,7 @@ public class ConsumidorService {
             // Borrar imagen anterior si existe
             if (consumidor.getRutaImagen() != null) {
                 try {
-                    Path rutaAnterior = Paths.get("C:/imagenes_consumidores", Paths.get(consumidor.getRutaImagen()).getFileName().toString());
+                    Path rutaAnterior = Paths.get(directorioImagenes, Paths.get(consumidor.getRutaImagen()).getFileName().toString());
                     Files.deleteIfExists(rutaAnterior);
                 } catch (IOException e) {
                     // Log interno si deseas
@@ -94,7 +94,7 @@ public class ConsumidorService {
 
             // Guardar nueva imagen
             String nombreArchivo = cedula + "_" + imagen.getOriginalFilename().replaceAll("\\s+", "_");
-            Path rutaArchivo = Paths.get("C:/imagenes_consumidores", nombreArchivo);
+            Path rutaArchivo = Paths.get(directorioImagenes, nombreArchivo);
             Files.createDirectories(rutaArchivo.getParent());
             Files.write(rutaArchivo, imagen.getBytes());
 
@@ -248,7 +248,7 @@ public class ConsumidorService {
             }
 
             String nombreArchivo = consumidor.getCedula() + "_" + imagen.getOriginalFilename();
-            Path rutaArchivo = Paths.get("C:/imagenes_consumidores", nombreArchivo);
+            Path rutaArchivo = Paths.get(directorioImagenes, nombreArchivo);
             Files.createDirectories(rutaArchivo.getParent()); // Asegura carpeta
             Files.write(rutaArchivo, imagen.getBytes());
 
