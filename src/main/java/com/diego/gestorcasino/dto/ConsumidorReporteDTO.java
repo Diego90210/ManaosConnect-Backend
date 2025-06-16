@@ -1,14 +1,14 @@
 package com.diego.gestorcasino.dto;
 
-public class EmpleadoReporteDTO {
+public class ConsumidorReporteDTO {
     private String cedula;
     private String nombre;
     private double totalConsumido;
     private int cantidadConsumos;
 
-    public EmpleadoReporteDTO() {}
+    public ConsumidorReporteDTO() {}
 
-    public EmpleadoReporteDTO(String cedula, String nombre, double totalConsumido, int cantidadConsumos) {
+    public ConsumidorReporteDTO(String cedula, String nombre, double totalConsumido, int cantidadConsumos) {
         this.cedula = cedula;
         this.nombre = nombre;
         this.totalConsumido = totalConsumido;

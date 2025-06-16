@@ -29,8 +29,7 @@ public class ContadorReportesController {
     @Autowired
     private EmpresaClienteService empresaService;
 
-    //  CREAR reporte (mantener entity porque es creación)
-    @PostMapping("/reportes")
+    @PostMapping(value = "/reportes", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReporteResponseDTO> crearReporte(@RequestBody ReporteRequestDTO requestDTO) {
         try {
             Reporte nuevo = reporteService.crear(requestDTO);

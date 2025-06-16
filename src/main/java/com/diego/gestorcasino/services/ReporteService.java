@@ -1,6 +1,6 @@
 package com.diego.gestorcasino.services;
 
-import com.diego.gestorcasino.dto.EmpleadoReporteDTO;
+import com.diego.gestorcasino.dto.ConsumidorReporteDTO;
 import com.diego.gestorcasino.dto.ReporteRequestDTO;
 import com.diego.gestorcasino.dto.ReporteResponseDTO;
 import com.diego.gestorcasino.models.Consumidor;
@@ -90,16 +90,6 @@ public class ReporteService {
         double totalConsumos = consumosEmpresa.stream()
                 .mapToDouble(Consumo::getTotal)
                 .sum();
-
-        // Verificar si ya existe un reporte para los mismos parámetros
-        List<Reporte> reportesExistentes = reporteRepository.findByEmpresaCliente_Nit(nitEmpresa).stream()
-                .filter(reporte -> reporte.getFechaInicio().equals(fechaInicio) && reporte.getFechaFin().equals(fechaFin))
-                .collect(Collectors.toList());
-
-        if (!reportesExistentes.isEmpty()) {
-            throw new RuntimeException("Ya existe un reporte para la empresa " + nitEmpresa + 
-                                     " en el período " + fechaInicio + " - " + fechaFin);
-        }
 
         // Crear y guardar el reporte
         Reporte nuevoReporte = new Reporte();
@@ -201,7 +191,7 @@ public List<ReporteResponseDTO> listarPorEmpresaDTO(String nit) {
 
 public ReporteResponseDTO convertirADTO(Reporte reporte) {
     // Obtener empleados que consumieron en el período del reporte
-    List<EmpleadoReporteDTO> empleados = obtenerEmpleadosConConsumos(
+    List<ConsumidorReporteDTO> empleados = obtenerEmpleadosConConsumos(
         reporte.getEmpresaCliente().getNit(),
         reporte.getFechaInicio(),
         reporte.getFechaFin()
@@ -218,7 +208,7 @@ public ReporteResponseDTO convertirADTO(Reporte reporte) {
     );
 }
 
-private List<EmpleadoReporteDTO> obtenerEmpleadosConConsumos(String nitEmpresa, LocalDate fechaInicio, LocalDate fechaFin) {
+private List<ConsumidorReporteDTO> obtenerEmpleadosConConsumos(String nitEmpresa, LocalDate fechaInicio, LocalDate fechaFin) {
     // Obtener todos los consumidores de la empresa
     List<Consumidor> consumidoresEmpresa = consumidorRepository.findAll().stream()
             .filter(consumidor -> nitEmpresa.equals(consumidor.getEmpresaNIT()))
@@ -259,7 +249,7 @@ private List<EmpleadoReporteDTO> obtenerEmpleadosConConsumos(String nitEmpresa, 
                 
                 int cantidadConsumos = consumosEmpleado.size();
 
-                return new EmpleadoReporteDTO(
+                return new ConsumidorReporteDTO(
                     cedula,
                     consumidor.getNombre(),
                     totalConsumido,

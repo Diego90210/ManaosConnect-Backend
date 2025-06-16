@@ -10,13 +10,13 @@ public class ReporteResponseDTO {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
     private double totalConsumos;
-    private List<EmpleadoReporteDTO> empleados; // NUEVO CAMPO
+    private List<ConsumidorReporteDTO> empleados; // NUEVO CAMPO
 
     public ReporteResponseDTO() {}
 
     public ReporteResponseDTO(int id, String empresaNit, String empresaNombre, 
                             LocalDate fechaInicio, LocalDate fechaFin, double totalConsumos,
-                            List<EmpleadoReporteDTO> empleados) { // ⭐ NUEVO PARÁMETRO
+                            List<ConsumidorReporteDTO> empleados) { // ⭐ NUEVO PARÁMETRO
         this.id = id;
         this.empresaNit = empresaNit;
         this.empresaNombre = empresaNombre;
@@ -45,6 +45,6 @@ public class ReporteResponseDTO {
     public double getTotalConsumos() { return totalConsumos; }
     public void setTotalConsumos(double totalConsumos) { this.totalConsumos = totalConsumos; }
 
-    public List<EmpleadoReporteDTO> getEmpleados() { return empleados; } // NUEVO GETTER
-    public void setEmpleados(List<EmpleadoReporteDTO> empleados) { this.empleados = empleados; } // NUEVO SETTER
+    public List<ConsumidorReporteDTO> getEmpleados() { return empleados; } // NUEVO GETTER
+    public void setEmpleados(List<ConsumidorReporteDTO> empleados) { this.empleados = empleados; } // NUEVO SETTER
 }

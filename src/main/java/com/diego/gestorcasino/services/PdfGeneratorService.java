@@ -1,6 +1,6 @@
 package com.diego.gestorcasino.services;
 
-import com.diego.gestorcasino.dto.EmpleadoReporteDTO;
+import com.diego.gestorcasino.dto.ConsumidorReporteDTO;
 import com.diego.gestorcasino.dto.ReporteResponseDTO;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -63,7 +63,7 @@ public class PdfGeneratorService {
                 tabla.addHeaderCell(new Cell().add(new Paragraph("Total").setBold()));
 
                 // Datos de empleados
-                for (EmpleadoReporteDTO empleado : reporte.getEmpleados()) {
+                for (ConsumidorReporteDTO empleado : reporte.getEmpleados()) {
                     tabla.addCell(new Cell().add(new Paragraph(empleado.getCedula())));
                     tabla.addCell(new Cell().add(new Paragraph(empleado.getNombre())));
                     tabla.addCell(new Cell().add(new Paragraph(String.valueOf(empleado.getCantidadConsumos()))));
@@ -82,7 +82,7 @@ public class PdfGeneratorService {
                                      (reporte.getEmpleados() != null ? reporte.getEmpleados().size() : 0)));
             document.add(new Paragraph("Total consumos: " + 
                                      (reporte.getEmpleados() != null ? 
-                                      reporte.getEmpleados().stream().mapToInt(EmpleadoReporteDTO::getCantidadConsumos).sum() : 0)));
+                                      reporte.getEmpleados().stream().mapToInt(ConsumidorReporteDTO::getCantidadConsumos).sum() : 0)));
             document.add(new Paragraph("Monto total: " + formatoMoneda.format(reporte.getTotalConsumos())).setBold());
 
             // PIE DE PÁGINA
