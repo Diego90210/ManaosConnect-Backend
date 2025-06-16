@@ -53,12 +53,11 @@ public class CajeroOperacionesController {
     }
 
     @GetMapping("/mis-consumos")
-    public ResponseEntity<List<Consumo>> obtenerMisConsumos(Principal principal) {
+    public ResponseEntity<List<ConsumoDTO>> obtenerMisConsumos(Principal principal) {
         String cedulaCajero = principal.getName();
-        List<Consumo> consumos = consumoService.listarPorCajero(cedulaCajero);
+        List<ConsumoDTO> consumos = consumoService.listarPorCajeroDTO(cedulaCajero);
         return ResponseEntity.ok(consumos);
     }
-
 
     @PutMapping("/consumos/{id}")
     public ResponseEntity<Consumo> actualizarConsumo(@PathVariable int id, @RequestBody Consumo consumo) {

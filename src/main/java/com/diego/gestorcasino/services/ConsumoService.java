@@ -223,8 +223,10 @@ public class ConsumoService {
 
         return consumoDTO;
     }
-    public List<Consumo> listarPorCajero(String cedulaCajero) {
-        return consumoRepository.findByCedulaCajero(cedulaCajero);
+    public List<ConsumoDTO> listarPorCajeroDTO(String cedulaCajero) {
+        return consumoRepository.findByCedulaCajero(cedulaCajero).stream()
+                .map(this::convertirAConsumoDTO)
+                .collect(Collectors.toList());
     }
 
     public Consumo registrarDesdeDTO(RegistroConsumoRequest request) {
