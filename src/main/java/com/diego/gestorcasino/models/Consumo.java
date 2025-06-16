@@ -15,7 +15,7 @@ public class Consumo {
     @Column(nullable = false)
     private String cedulaCajero;
 
-    @Column(nullable = false)
+    @Column(name = "cedula_consumidor", nullable = false)
     private String cedulaConsumidor;
 
     @Column(nullable = false)
