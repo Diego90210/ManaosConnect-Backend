@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cajero")
@@ -43,7 +45,10 @@ public class CajeroOperacionesController {
             return ResponseEntity.ok(nuevoConsumo);
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al registrar consumo: " + e.getMessage());
+            Map<String, Object> error = new HashMap<>();
+            error.put("mensaje", "Error al registrar consumo");
+            error.put("detalle", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
         }
     }
 
