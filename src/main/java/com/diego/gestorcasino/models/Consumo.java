@@ -41,8 +41,8 @@ public class Consumo {
         return cedulaConsumidor;
     }
 
-    public void setCedulaConsumidor(String cedulaEmpleado) {
-        this.cedulaConsumidor = cedulaEmpleado;
+    public void setCedulaConsumidor(String cedulaConsumidor) {
+        this.cedulaConsumidor = cedulaConsumidor;
     }
 
     public LocalDate getFecha() {

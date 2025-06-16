@@ -170,20 +170,20 @@ public class ConsumoService {
         return consumos.stream().map(this::convertirAConsumoDTO).collect(Collectors.toList());
     }
 
-    public List<ConsumoDTO> obtenerConsumosPorConsumidor(String cedulaEmpleado) {
+    public List<ConsumoDTO> obtenerConsumosPorConsumidor(String cedulaConsumidor) {
         // Validar que el empleado existe antes de buscar los consumos
-        Consumidor consumidor = consumidorRepository.findByCedula(cedulaEmpleado)
-                .orElseThrow(() -> new RuntimeException("Consumidor no encontrado con cédula: " + cedulaEmpleado));
+        Consumidor consumidor = consumidorRepository.findByCedula(cedulaConsumidor)
+                .orElseThrow(() -> new RuntimeException("Consumidor no encontrado con cédula: " + cedulaConsumidor));
 
         // Obtener consumos asociados al empleado
-        List<Consumo> consumos = consumoRepository.findByCedulaConsumidor(cedulaEmpleado);
+        List<Consumo> consumos = consumoRepository.findByCedulaConsumidor(cedulaConsumidor);
 
         // Convertir cada consumo a ConsumoDTO
         return consumos.stream().map(this::convertirAConsumoDTO).collect(Collectors.toList());
     }
 
-    public Consumo anadirConsumo(String cedulaEmpleado, Consumo consumo) {
-        consumo.setCedulaConsumidor(cedulaEmpleado);
+    public Consumo anadirConsumo(String cedulaConsumidor, Consumo consumo) {
+        consumo.setCedulaConsumidor(cedulaConsumidor);
         return guardar(consumo);
     }
 

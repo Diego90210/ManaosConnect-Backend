@@ -69,16 +69,4 @@ public class ConsumoDTO {
         this.rutaImagenConsumidor = rutaImagenConsumidor;
     }
 
-    @Override
-    public String toString() {
-        return "ConsumoDTO{" +
-                "id=" + id +
-                ", cedulaEmpleado='" + cedulaConsumidor + '\'' +
-                ", fecha='" + fecha + '\'' +
-                ", total=" + total +
-                ", nombreEmpleado='" + nombreConsumidor + '\'' +
-                ", rutaImagenEmpleado='" + rutaImagenConsumidor + '\'' +
-                ", platosConsumidos=" + platosConsumidos +
-                '}';
-    }
 }
